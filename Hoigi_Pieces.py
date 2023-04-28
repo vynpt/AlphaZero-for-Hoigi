@@ -1,24 +1,25 @@
 class Piece:
     def __init__(self, team, type, image, killable=False):
         self.team = team ## -1 for black, 0 for empty square, 1 for white
+        self.image = image
+        self.value = [1, 4, 5, 3, 3, 2, 4, 6, 7]
+        self.onhold = True     ## if the piece is not on the board yet
+        
         self.type = type
         ## pawn = 1
         ## king = 2
         ## fortress = 3
-        ## spy = 4
-        ## captain = 5
-        ## cannon = 6
-        ## musketeer = 7
-        ## knight = 8
-        ## samurai = 9
-        ## archer = 10
-        ## major = 11
-        ## lieutenant = 12
-        ## general = 13
-        self.image = image
-        self.value = 0
-        self.onhold = True     ## if the piece is not on the board yet
-        #self.killable = killable
+        ## captain = 4
+        ## cannon = 5
+        ## musketeer = 6
+        ## archer = 7
+        ## lieutenant = 8
+        ## general = 9
+
+        ## spy = 10
+        ## knight = 11
+        ## samurai = 12
+        ## major = 13
 
     ## return the layers on a square in top to bottom order
     ##def get_layer(coordinate):
@@ -148,180 +149,6 @@ class Piece:
                     pass
         return self.remove_invalid_moves(result_moves)
 
-    # def spy_moves(self, board, position):
-    #     result_moves = []     ## list of possible moves
-    #     y = position[0]
-    #     x = position[1]
-    #     z = position[2]
-    #     if (z == 2):
-    #         try:
-    #             if (board[y - 1 * self.team ][x][2] == " "):
-    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
-    #             else:
-    #                 for i in range(3): ## [layer3, layer2, layer1]
-    #                     if (board[y - 1 * self.team ][x][i] == " "):
-    #                         continue
-    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
-    #                         break
-    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
-    #                         break
-    #         except:
-    #             pass
-    #     elif (z == 1):
-    #         pass
-    #     else:
-    #         pass
-    #     return self.remove_invalid_moves(result_moves)
-
-    def captain_moves(self, board, position):
-        ## tier 1: move 1-square, tier 2 & 3: capture movement of the piece below
-        result_moves = []     ## list of possible moves
-        y = position[0]
-        x = position[1]
-        z = position[2]
-
-        if (z == 2):   ## [layer3, layer2, layer1]
-            ## account for negative out of bound on the board
-            numj = 3
-            numk = 3
-            if (x - 1 >= 0): 
-                x = x - 1
-            else:
-                numj = 2
-            if (y - 1 >= 0): 
-                y = y - 1
-            else:
-                numk = 2
-            for j in range(numj):
-                for k in range(numk):
-                    try:
-                        if (j == position[1] and k == position[0]): ## check if the move is same as starting position
-                            continue
-                        for l in range(3):
-                            if (board[y + k][x + j][l] == " "):
-                                continue
-                            elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != "king"):
-                                result_moves += [self.team, self.type, [y + k, x + j, l - 1], position, False]
-                                break
-                            elif (board[y + k][x + j][l].team == -self.team):
-                                result_moves += [self.team, self.type, [y + k, x + j, l], position, True]
-                                break                           
-                    except:
-                        pass
-        else:  ## captain is similar for layer2 and layer3
-            self.type = board[y][x][z+1].type
-        return self.remove_invalid_moves(result_moves)
-
-    def cannon_moves(self, board, position):
-        ## move orthogonally
-        result_moves = []     ## list of possible moves
-        y = position[0]
-        x = position[1]
-        z = position[2]
-
-        move = 3 - z   ## move i-square orthogonally
-        for i in range(-move, move + 1):
-            if (i == 0):
-                continue
-            for ly in range(3):
-                if (y+i >= 0 and y+i < 8):    ## check out of bound
-                    if (board[y+i][x][ly] == " "):
-                        continue
-                    elif (board[y+i][x][ly].team == self.team and ly > 0 and board[y+i][x][ly].type != "king"):
-                        result_moves += [self.team, self.type, [y+i, x, ly-1], position, False]
-                        break
-                    elif (board[y+i][x][ly].team == -self.team):
-                        result_moves += [self.team, self.type, [y+i, x, ly], position, True]
-                        break 
-            for lx in range(3):
-                if (x+i >= 0 and x+i < 8):    ## check out of bound
-                    if (board[y][x+i][lx] == " "):
-                        continue
-                    elif (board[y][x+i][lx].team == self.team and lx > 0 and board[y][x+i][lx].type != "king"):
-                        result_moves += [self.team, self.type, [y, x+i, lx-1], position, False]
-                        break
-                    elif (board[y][x+i][lx].team == -self.team):
-                        result_moves += [self.team, self.type, [y, x+i, lx], position, True]
-                        break 
-        return self.remove_invalid_moves(result_moves)
-
-    def musketeer_moves(self, board, position):
-        ## move straight forward based on tier
-        result_moves = []     ## list of possible moves
-        y = position[0]
-        x = position[1]
-        z = position[2]
-
-        move = 3 - z   ## move i-square orthogonally
-        for i in range(1, move + 1):
-            for l in range(3):
-                if (y - i * self.team >= 0 and y - i * self.team < 8):    ## check out of bound
-                    if (board[y - i * self.team][x][l] == " "):
-                        continue
-                    elif (board[y - i * self.team][x][l].team == self.team and l > 0 and board[y - i * self.team][x][l].type != "king"):
-                        result_moves += [self.team, self.type, [y - i * self.team, x, l-1], position, False]
-                        break
-                    elif (board[y - i * self.team][x][l].team == -self.team):
-                        result_moves += [self.team, self.type, [y - i * self.team, x, l], position, True]
-                        break 
-        return self.remove_invalid_moves(result_moves)
-
-    # def knight_moves(self, board, position):
-    #     result_moves = []     ## list of possible moves
-    #     y = position[0]
-    #     x = position[1]
-    #     z = position[2]
-    #     if (z == 2):
-    #         try:
-    #             if (board[y - 1 * self.team ][x][2] == " "):
-    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
-    #             else:
-    #                 for i in range(3): ## [layer3, layer2, layer1]
-    #                     if (board[y - 1 * self.team ][x][i] == " "):
-    #                         continue
-    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
-    #                         break
-    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
-    #                         break
-    #         except:
-    #             pass
-    #     elif (z == 1):
-    #         pass
-    #     else:
-    #         pass
-    #     return self.remove_invalid_moves(result_moves)
-
-    # def samurai_moves(self, board, position):
-    #     result_moves = []     ## list of possible moves
-    #     y = position[0]
-    #     x = position[1]
-    #     z = position[2]
-    #     if (z == 2):
-    #         try:
-    #             if (board[y - 1 * self.team ][x][2] == " "):
-    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
-    #             else:
-    #                 for i in range(3): ## [layer3, layer2, layer1]
-    #                     if (board[y - 1 * self.team ][x][i] == " "):
-    #                         continue
-    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
-    #                         break
-    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
-    #                         break
-    #         except:
-    #             pass
-    #     elif (z == 1):
-    #         pass
-    #     else:
-    #         pass
-    #     return self.remove_invalid_moves(result_moves)
-
     def archer_moves(self, board, position):
         ## range based on tier
         result_moves = []     ## list of possible moves
@@ -350,33 +177,6 @@ class Piece:
                 except:
                     pass
         return self.remove_invalid_moves(result_moves)
-
-    # def major_moves(self, board, position):
-    #     result_moves = []     ## list of possible moves
-    #     y = position[0]
-    #     x = position[1]
-    #     z = position[2]
-    #     if (z == 2):
-    #         try:
-    #             if (board[y - 1 * self.team ][x][2] == " "):
-    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
-    #             else:
-    #                 for i in range(3): ## [layer3, layer2, layer1]
-    #                     if (board[y - 1 * self.team ][x][i] == " "):
-    #                         continue
-    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
-    #                         break
-    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
-    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
-    #                         break
-    #         except:
-    #             pass
-    #     elif (z == 1):
-    #         pass
-    #     else:
-    #         pass
-    #     return self.remove_invalid_moves(result_moves)
 
     def lieutenant_moves(self, board, position):
         result_moves = []     ## list of possible moves
@@ -476,3 +276,230 @@ class Piece:
                         result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
                         break                       
         return self.remove_invalid_moves(result_moves)
+
+    def captain_moves(self, board, position):
+        ## tier 1: move 1-square, tier 2 & 3: capture movement of the piece below
+        result_moves = []     ## list of possible moves
+        y = position[0]
+        x = position[1]
+        z = position[2]
+
+        if (z == 2):   ## [layer3, layer2, layer1]
+            ## account for negative out of bound on the board
+            numj = 3
+            numk = 3
+            if (x - 1 >= 0): 
+                x = x - 1
+            else:
+                numj = 2
+            if (y - 1 >= 0): 
+                y = y - 1
+            else:
+                numk = 2
+            for j in range(numj):
+                for k in range(numk):
+                    try:
+                        if (j == position[1] and k == position[0]): ## check if the move is same as starting position
+                            continue
+                        for l in range(3):
+                            if (board[y + k][x + j][l] == " "):
+                                continue
+                            elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != "king"):
+                                result_moves += [self.team, self.type, [y + k, x + j, l - 1], position, False]
+                                break
+                            elif (board[y + k][x + j][l].team == -self.team):
+                                result_moves += [self.team, self.type, [y + k, x + j, l], position, True]
+                                break                           
+                    except:
+                        pass
+        else:  ## captain is similar for layer2 and layer3
+            self.type = board[y][x][z+1].type
+        return self.remove_invalid_moves(result_moves)
+
+    def cannon_moves(self, board, position):
+        ## move orthogonally
+        result_moves = []     ## list of possible moves
+        y = position[0]
+        x = position[1]
+        z = position[2]
+
+        move = 3 - z   ## move i-square orthogonally
+        for i in range(-move, move + 1):
+            if (i == 0):
+                continue
+            for ly in range(3):
+                if (y+i >= 0 and y+i < 8):    ## check out of bound
+                    if (board[y+i][x][ly] == " "):
+                        continue
+                    elif (board[y+i][x][ly].team == self.team and ly > 0 and board[y+i][x][ly].type != "king"):
+                        result_moves += [self.team, self.type, [y+i, x, ly-1], position, False]
+                        break
+                    elif (board[y+i][x][ly].team == -self.team):
+                        result_moves += [self.team, self.type, [y+i, x, ly], position, True]
+                        break 
+            for lx in range(3):
+                if (x+i >= 0 and x+i < 8):    ## check out of bound
+                    if (board[y][x+i][lx] == " "):
+                        continue
+                    elif (board[y][x+i][lx].team == self.team and lx > 0 and board[y][x+i][lx].type != "king"):
+                        result_moves += [self.team, self.type, [y, x+i, lx-1], position, False]
+                        break
+                    elif (board[y][x+i][lx].team == -self.team):
+                        result_moves += [self.team, self.type, [y, x+i, lx], position, True]
+                        break 
+        return self.remove_invalid_moves(result_moves)
+
+    def musketeer_moves(self, board, position):
+        ## move straight forward based on tier
+        result_moves = []     ## list of possible moves
+        y = position[0]
+        x = position[1]
+        z = position[2]
+
+        move = 3 - z   ## move i-square orthogonally
+        for i in range(1, move + 1):
+            for l in range(3):
+                if (y - i * self.team >= 0 and y - i * self.team < 8):    ## check out of bound
+                    if (board[y - i * self.team][x][l] == " "):
+                        continue
+                    elif (board[y - i * self.team][x][l].team == self.team and l > 0 and board[y - i * self.team][x][l].type != "king"):
+                        result_moves += [self.team, self.type, [y - i * self.team, x, l-1], position, False]
+                        break
+                    elif (board[y - i * self.team][x][l].team == -self.team):
+                        result_moves += [self.team, self.type, [y - i * self.team, x, l], position, True]
+                        break 
+        return self.remove_invalid_moves(result_moves)
+
+    def moves(self, board, position):
+        # generate a list of moves for the current piece object
+        movelist = []
+        if (self.type == 1):
+            movelist = self.pawn_moves(self, board, position) 
+        if (self.type == 2):
+            movelist = self.king_moves(self, board, position)
+        if (self.type == 3):
+            movelist = self.fortress_moves(self, board, position)
+        if (self.type == 4):
+            movelist = self.archer_moves(self, board, position)
+        if (self.type == 5):
+            movelist = self.lieutenant_moves(self, board, position)
+        if (self.type == 6):
+            movelist = self.general_moves(self, board, position)
+        if (self.type == 7):
+            movelist = self.captain_moves(self, board, position)
+        if (self.type == 8):
+            movelist = self.cannon_moves(self, board, position)
+        if (self.type == 9):
+            movelist = self.musketeer_moves(self, board, position)
+        return movelist
+
+
+
+# code we are not using
+
+    # def knight_moves(self, board, position):
+    #     result_moves = []     ## list of possible moves
+    #     y = position[0]
+    #     x = position[1]
+    #     z = position[2]
+    #     if (z == 2):
+    #         try:
+    #             if (board[y - 1 * self.team ][x][2] == " "):
+    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
+    #             else:
+    #                 for i in range(3): ## [layer3, layer2, layer1]
+    #                     if (board[y - 1 * self.team ][x][i] == " "):
+    #                         continue
+    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
+    #                         break
+    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
+    #                         break
+    #         except:
+    #             pass
+    #     elif (z == 1):
+    #         pass
+    #     else:
+    #         pass
+    #     return self.remove_invalid_moves(result_moves)
+
+    # def samurai_moves(self, board, position):
+    #     result_moves = []     ## list of possible moves
+    #     y = position[0]
+    #     x = position[1]
+    #     z = position[2]
+    #     if (z == 2):
+    #         try:
+    #             if (board[y - 1 * self.team ][x][2] == " "):
+    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
+    #             else:
+    #                 for i in range(3): ## [layer3, layer2, layer1]
+    #                     if (board[y - 1 * self.team ][x][i] == " "):
+    #                         continue
+    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
+    #                         break
+    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
+    #                         break
+    #         except:
+    #             pass
+    #     elif (z == 1):
+    #         pass
+    #     else:
+    #         pass
+    #     return self.remove_invalid_moves(result_moves)
+
+    # def major_moves(self, board, position):
+    #     result_moves = []     ## list of possible moves
+    #     y = position[0]
+    #     x = position[1]
+    #     z = position[2]
+    #     if (z == 2):
+    #         try:
+    #             if (board[y - 1 * self.team ][x][2] == " "):
+    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
+    #             else:
+    #                 for i in range(3): ## [layer3, layer2, layer1]
+    #                     if (board[y - 1 * self.team ][x][i] == " "):
+    #                         continue
+    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
+    #                         break
+    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
+    #                         break
+    #         except:
+    #             pass
+    #     elif (z == 1):
+    #         pass
+    #     else:
+    #         pass
+    #     return self.remove_invalid_moves(result_moves)
+        # def spy_moves(self, board, position):
+    #     result_moves = []     ## list of possible moves
+    #     y = position[0]
+    #     x = position[1]
+    #     z = position[2]
+    #     if (z == 2):
+    #         try:
+    #             if (board[y - 1 * self.team ][x][2] == " "):
+    #                 result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
+    #             else:
+    #                 for i in range(3): ## [layer3, layer2, layer1]
+    #                     if (board[y - 1 * self.team ][x][i] == " "):
+    #                         continue
+    #                     elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
+    #                         break
+    #                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
+    #                         result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
+    #                         break
+    #         except:
+    #             pass
+    #     elif (z == 1):
+    #         pass
+    #     else:
+    #         pass
+    #     return self.remove_invalid_moves(result_moves)
