@@ -331,7 +331,44 @@ def main():     # main program for running the chess game
 #main(WIN, WIDTH)
 
 
+def initialsetup1(board):
+    # Put some pieces on the board to start the game
+    
+    for x in range(9): # add pawns
+        board.add_piece(-1, 1, 0, [2,x,2], False) 
+        board.add_piece(1, 1, 0, [6,x,2], False) 
+    
+    # add kings
+    board.add_piece(-1, 2, 0, [0,1,2], False) 
+    board.add_piece(1, 2, 0, [8,1,2], False) 
 
+    # add fortress
+    board.add_piece(-1, 3, 0, [0,2,2], False) 
+    board.add_piece(1, 3, 0, [8,2,2], False) 
+
+    # add captain
+    board.add_piece(-1, 4, 0, [0,3,2], False) 
+    board.add_piece(1, 4, 0, [8,3,2], False) 
+
+    # add cannon
+    board.add_piece(-1, 5, 0, [0,4,2], False) 
+    board.add_piece(1, 5, 0, [8,4,2], False) 
+
+    # add musketeer
+    board.add_piece(-1, 6, 0, [0,5,2], False) 
+    board.add_piece(1, 6, 0, [8,5,2], False) 
+
+    # add archer
+    board.add_piece(-1, 7, 0, [0,6,2], False) 
+    board.add_piece(1, 7, 0, [8,6,2], False) 
+
+    # add lieutenant
+    board.add_piece(-1, 8, 0, [0,7,2], False) 
+    board.add_piece(1, 8, 0, [8,7,2], False) 
+
+    # add general
+    board.add_piece(-1, 9, 0, [0,8,2], False) 
+    board.add_piece(1, 9, 0, [8,8,2], False) 
 
 def process_move(board, player, opponent):
     result = True
@@ -342,20 +379,23 @@ def process_move(board, player, opponent):
     board.add_piece(best_move[0],best_move[1], image, best_move[3],best_move[4])
     board.move_history += [best_move]
     board.previous_move = best_move
-    return result
+    
 
 ## Test code for non graphic interface 
 def run1():
+    move_limit = 100
     board1 = board(9,9,3)
+    initialsetup1(board1)
     print("board ", board1)
     #print(b1.squares)
     player_white = Minimax_Player(1)
     player_black = Minimax_Player(-1)
-    while True:
-        if (process_move(board1, player_white, player_black)):
-            return board1
-        if (process_move(board1, player_black, player_white)):
-            return board1
+    
+    while (move_limit != 0):
+        process_move(board1, player_white, player_black)
+        board1.changeturn()
+        process_move(board1, player_black, player_white)
+            
         print(board1)
 
         winner = board.check_winner()
@@ -365,7 +405,9 @@ def run1():
         if (winner == 0):
             print("winner is black")
             break
-
+        
+        move_limit -= 1
+        
 
 
 

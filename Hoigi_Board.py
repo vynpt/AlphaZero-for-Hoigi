@@ -13,8 +13,8 @@ class board:
         self.layers = layers
         self.squares = [[[' ' for i in range(self.layers)] for j in range(self.height)] for k in range(self.width)] # always in the form of [rows, columns, layers]
         self.previous_move = []
-
         self.move_history = []
+        self.turn = 1  # indicator for who's turn it is
 
         # data format of position 9x9x3 x9, p is number of pieces 
         # 0 = empty square, 1 = white, -1 = black
@@ -28,7 +28,7 @@ class board:
             s += "--" * self.width + "-" + "\n"
             s += "|"
             for x in range(self.width):
-                s += "(" + self.squares[y][x][2] + "," + self.squares[y][x][1] + "," + self.squares[y][x][0] + ")" + "|"
+                s += "(" + str(self.squares[y][x][2]) + "," + str(self.squares[y][x][1]) + "," + str(self.squares[y][x][0]) + ")" + "|"
             s += "\n"
         s += "--" * self.width + "-" + "\n"
         return s
@@ -45,6 +45,9 @@ class board:
                 for layer in range(z):
                     newboard.squares[row][column][layer] = self.squares[row][column][layer]
         return newboard
+
+    def changeturn(self):
+        self.turn *= -1
 
     def add_piece(self, team, type, image, destination, capture):
         """ add a piece to a specified square on the Board
@@ -82,13 +85,18 @@ class board:
             for x in range(self.width):
                 for z in range(self.layers):
                     if (self.squares[y][x][z] != " "):
-                        list += [self.squares[y][x][z], [y,x,z]]
+                        list += [[self.squares[y][x][z], [y,x,z]]]
+        #print("allpieces list = ", list)
         return list
 
     def legal_moves(self, team):
         # return a list of all legal moves for a team
         movelist = []
-        for [p, position] in self.allpieces():
+        a = self.allpieces()
+        #print("allpices = ", a)
+        for x in a:
+            p = x[0]
+            position = x[1]
             if (p.team == team):
-                movelist += p.moves(board, position)
+                movelist += [p.moves(board, position)]
         return movelist 

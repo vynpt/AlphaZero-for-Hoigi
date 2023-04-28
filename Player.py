@@ -103,7 +103,7 @@ class Minimax_Player(Player):
 
             scores.append(self.eval_board(temp))
 
-        if board.turn == True:
+        if board.turn == 1:
         
             best_move = moves[scores.index(max(scores))]
 
@@ -111,6 +111,9 @@ class Minimax_Player(Player):
             best_move = moves[scores.index(min(scores))]
 
         return best_move
+    
+    def next_move(self, board, opponent):
+        return self.min_maxN(board, 1)
         
 # a simple wrapper function as the display only gives one imput , board
 #def play_min_maxN(board):

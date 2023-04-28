@@ -33,7 +33,33 @@ class Piece:
     ## takes a board object, and the position of the piece
     ## return a list of valid moves excluding captures mechanics 
 
-    def remove_invalid_moves(move_list):
+    def __repr__(self):
+        ## return a string letter representation of piece, capitalcase for white, lowercase black
+        s = ""
+        if (self.type == 1): # p = pawn
+            s = "p"
+        if (self.type == 2): # k = king
+            s = "k"
+        if (self.type == 3): # f = fortress
+            s = "f"
+        if (self.type == 4): # t = captain
+            s = "t"
+        if (self.type == 5): # c = cannon
+            s = "c"
+        if (self.type == 6): # m = musketeer
+            s = "m"
+        if (self.type == 7): # a = archer
+            s = "a"
+        if (self.type == 8): # l = lietenant
+            s = "l"
+        if (self.type == 9): # g = general
+            s = "g"
+        
+        if (self.team == 1):  # capitalize strinng for white
+            s = s.upper()
+        return s
+
+    def remove_invalid_moves(self, move_list):
         ## remove moves exceed boundaries of the board
         new_list = []
         for i in move_list:
@@ -374,23 +400,23 @@ class Piece:
         # generate a list of moves for the current piece object
         movelist = []
         if (self.type == 1):
-            movelist = self.pawn_moves(self, board, position) 
+            movelist = self.pawn_moves(board, position) 
         if (self.type == 2):
-            movelist = self.king_moves(self, board, position)
+            movelist = self.king_moves(board, position)
         if (self.type == 3):
-            movelist = self.fortress_moves(self, board, position)
+            movelist = self.fortress_moves(board, position)
         if (self.type == 4):
-            movelist = self.archer_moves(self, board, position)
+            movelist = self.archer_moves(board, position)
         if (self.type == 5):
-            movelist = self.lieutenant_moves(self, board, position)
+            movelist = self.lieutenant_moves(board, position)
         if (self.type == 6):
-            movelist = self.general_moves(self, board, position)
+            movelist = self.general_moves(board, position)
         if (self.type == 7):
-            movelist = self.captain_moves(self, board, position)
+            movelist = self.captain_moves(board, position)
         if (self.type == 8):
-            movelist = self.cannon_moves(self, board, position)
+            movelist = self.cannon_moves(board, position)
         if (self.type == 9):
-            movelist = self.musketeer_moves(self, board, position)
+            movelist = self.musketeer_moves(board, position)
         return movelist
 
 
