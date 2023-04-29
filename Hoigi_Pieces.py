@@ -212,10 +212,10 @@ class Piece:
                         if (board[y + k][x + j][l] == " "):
                             continue
                         elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != "king"):
-                            result_moves += [self.team, self.type, [y+k, x+j, l-1], position, False]
+                            result_moves.append([self.team, self.type, [y+k, x+j, l-1], position, False])
                             break
                         elif (board[y + k][x + j][l].team == -self.team):
-                            result_moves += [self.team, self.type, [y+k, x+j, l], position, True]
+                            result_moves.append([self.team, self.type, [y+k, x+j, l], position, True])
                             break                        
                 except:
                     pass
@@ -236,10 +236,10 @@ class Piece:
                     if (board[possible[i][0]][possible[i][1]][l] == " "):
                         continue
                     elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != "king"):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
                         break
                     elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
                         break
         if (z == 1):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1]]
@@ -250,10 +250,10 @@ class Piece:
                     if (board[possible[i][0]][possible[i][1]][l] == " "):
                         continue
                     elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != "king"):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
                         break
                     elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
                         break 
         if (z == 0):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1], [y, x-1], [y, x+1]]
@@ -264,10 +264,10 @@ class Piece:
                     if (board[possible[i][0]][possible[i][1]][l] == " "):
                         continue
                     elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != "king"):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
                         break
                     elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
                         break                       
         return self.remove_invalid_moves(result_moves)
 
@@ -285,10 +285,10 @@ class Piece:
                     if (board[possible[i][0]][possible[i][1]][l] == " "):
                         continue
                     elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != "king"):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
                         break
                     elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
                         break
         if (z == 1):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1], [y, x-1], [y, x+1]]
@@ -299,10 +299,10 @@ class Piece:
                     if (board[possible[i][0]][possible[i][1]][l] == " "):
                         continue
                     elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != "king"):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
                         break
                     elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
                         break 
         if (z == 0):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1], [y, x-1], [y, x+1], [y - 2 * self.team, x-1], [y - 2 * self.team, x], [y - 2 * self.team, x+1]]
@@ -313,10 +313,10 @@ class Piece:
                     if (board[possible[i][0]][possible[i][1]][l] == " "):
                         continue
                     elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != "king"):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
                         break
                     elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves += [self.team, self.type, [possible[i][0], possible[i][1], l], position, True]
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
                         break                       
         return self.remove_invalid_moves(result_moves)
 
@@ -348,10 +348,10 @@ class Piece:
                             if (board[y + k][x + j][l] == " "):
                                 continue
                             elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != "king"):
-                                result_moves += [self.team, self.type, [y + k, x + j, l - 1], position, False]
+                                result_moves.append([self.team, self.type, [y + k, x + j, l - 1], position, False])
                                 break
                             elif (board[y + k][x + j][l].team == -self.team):
-                                result_moves += [self.team, self.type, [y + k, x + j, l], position, True]
+                                result_moves.append([self.team, self.type, [y + k, x + j, l], position, True])
                                 break                           
                     except:
                         pass
@@ -375,20 +375,20 @@ class Piece:
                     if (board[y+i][x][ly] == " "):
                         continue
                     elif (board[y+i][x][ly].team == self.team and ly > 0 and board[y+i][x][ly].type != "king"):
-                        result_moves += [self.team, self.type, [y+i, x, ly-1], position, False]
+                        result_moves.append([self.team, self.type, [y+i, x, ly-1], position, False])
                         break
                     elif (board[y+i][x][ly].team == -self.team):
-                        result_moves += [self.team, self.type, [y+i, x, ly], position, True]
+                        result_moves.append([self.team, self.type, [y+i, x, ly], position, True])
                         break 
             for lx in range(3):
                 if (x+i >= 0 and x+i < 8):    ## check out of bound
                     if (board[y][x+i][lx] == " "):
                         continue
                     elif (board[y][x+i][lx].team == self.team and lx > 0 and board[y][x+i][lx].type != "king"):
-                        result_moves += [self.team, self.type, [y, x+i, lx-1], position, False]
+                        result_moves.append([self.team, self.type, [y, x+i, lx-1], position, False])
                         break
                     elif (board[y][x+i][lx].team == -self.team):
-                        result_moves += [self.team, self.type, [y, x+i, lx], position, True]
+                        result_moves.append([self.team, self.type, [y, x+i, lx], position, True])
                         break 
         return self.remove_invalid_moves(result_moves)
 
@@ -406,10 +406,10 @@ class Piece:
                     if (board[y - i * self.team][x][l] == " "):
                         continue
                     elif (board[y - i * self.team][x][l].team == self.team and l > 0 and board[y - i * self.team][x][l].type != "king"):
-                        result_moves += [self.team, self.type, [y - i * self.team, x, l-1], position, False]
+                        result_moves.append([self.team, self.type, [y - i * self.team, x, l-1], position, False])
                         break
                     elif (board[y - i * self.team][x][l].team == -self.team):
-                        result_moves += [self.team, self.type, [y - i * self.team, x, l], position, True]
+                        result_moves.append([self.team, self.type, [y - i * self.team, x, l], position, True])
                         break 
         return self.remove_invalid_moves(result_moves)
 
