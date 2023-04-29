@@ -17,6 +17,7 @@ class Player:
         # by default the play class makes random moves
 
         self.add_move(board, opponent)
+        #print("player moves", self.moves)
         return random.choice(self.moves)
     
     def clear_moves(self):

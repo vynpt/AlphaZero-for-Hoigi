@@ -83,6 +83,8 @@ class board:
         winner = 0    
         for y in range(self.height):
             for x in range(self.width):
+                if (self.squares[y][x][2] == " "):
+                    continue
                 if (self.squares[y][x][2].type == 2 and self.squares[y][x][2].team == 1):  # find white king
                     winner += 1
                 if (self.squares[y][x][2].type == 2 and self.squares[y][x][2].team == -1):  # find black king
@@ -109,10 +111,10 @@ class board:
             p = x[0]
             position = x[1]
             if (p.team == team):
-                movelist += [p.moves(board, position)]
+                movelist += p.moves(self.squares, position)
 
         if movelist == []:
             print("there are no legal moves")
 
-        
+        #print("debug move list 1 = ", movelist)
         return movelist 

@@ -6,6 +6,7 @@ class Piece:
         self.onhold = True     ## if the piece is not on the board yet
         
         self.type = type
+        ## empty = 0
         ## pawn = 1
         ## king = 2
         ## fortress = 3
@@ -76,21 +77,22 @@ class Piece:
         x = position[1]
         z = position[2]
         if (z == 2): ## [layer3, layer2, layer1]
-            try:
-                if (board[y - 1 * self.team ][x][2] == " "):
-                    result_moves += [self.team, self.type, [y - 1 * self.team, x, 2], position, False]
-                else:
-                    for i in range(3): ## [layer3, layer2, layer1]
-                        if (board[y - 1 * self.team ][x][i] == " "):
-                            continue
-                        elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0 and board[y - 1 * self.team ][x][i].type != "king"):
-                            result_moves += [self.team, self.type, [y - 1 * self.team, x, i-1], position, False]
-                            break
-                        elif (board[y - 1 * self.team ][x][i].team == -self.team):
-                            result_moves += [self.team, self.type, [y - 1 * self.team, x, i], position, True]
-                            break
-            except:
-                pass
+            # y > 0 and y < 8  is checking the edge of board
+            # check
+            if (y > 0 and y < 8 and board[y - (1 * self.team) ][x][2] == " "):
+                result_moves.append([self.team, self.type, [y - 1 * self.team, x, 2], position, False])
+            elif (y > 0 and y < 8 ):
+                for i in range(3): ## [layer3, layer2, layer1]
+                    if (board[y - 1 * self.team ][x][i] == " "):
+                        continue
+                    elif (board[y - 1 * self.team ][x][i].team == self.team and i > 0 and board[y - 1 * self.team ][x][i].type != "king"):
+                        result_moves.append([self.team, self.type, [y - 1 * self.team, x, i-1], position, False])
+                        break
+                    elif (board[y - 1 * self.team ][x][i].team == -self.team):
+                        result_moves.append([self.team, self.type, [y - 1 * self.team, x, i], position, True])
+                        break
+            
+            
         else: ## pawn has same movements for layer2 and layer3
             num = 3
             ## check if the pawn is at left most side of the board, since negative array index will still be processed by try-except
@@ -100,21 +102,20 @@ class Piece:
                 num = 2
             for j in range(num):
                 ## moves that are out of the board will be passed
-                try:
-                    if (board[y - 1 * self.team ][x + j][2] == " "):
-                        result_moves += [self.team, self.type, [y - 1 * self.team, x + j, 2], position, False]
-                    else:
-                        for i in range(3): ## [layer3, layer2, layer1]
-                            if (board[y - 1 * self.team ][x + j][i] == " "):
-                                continue
-                            elif (board[y - 1 * self.team ][x + j][i].team == self.team and i > 0 and board[y - 1 * self.team ][x + j][i].type != "king"):
-                                result_moves += [self.team, self.type, [y - 1 * self.team, x + j, i-1], position, False]
-                                break
-                            elif (board[y - 1 * self.team ][x + j][i].team == -self.team):
-                                result_moves += [self.team, self.type, [y - 1 * self.team, x + j, i], position, True]
-                                break
-                except:
-                    pass
+                
+                if (board[y - 1 * self.team ][x + j][2] == " "):
+                        result_moves.append([self.team, self.type, [y - 1 * self.team, x + j, 2], position, False])
+                else:
+                    for i in range(3): ## [layer3, layer2, layer1]
+                        if (board[y - 1 * self.team ][x + j][i] == " "):
+                            continue
+                        elif (board[y - 1 * self.team ][x + j][i].team == self.team and i > 0 and board[y - 1 * self.team ][x + j][i].type != "king"):
+                            result_moves.append([self.team, self.type, [y - 1 * self.team, x + j, i-1], position, False])
+                            break
+                        elif (board[y - 1 * self.team ][x + j][i].team == -self.team):
+                            result_moves.append([self.team, self.type, [y - 1 * self.team, x + j, i], position, True])
+                            break
+                
         
         return self.remove_invalid_moves(result_moves)
     
@@ -125,27 +126,34 @@ class Piece:
         x = position[1]
         z = position[2]
         ## account for negative out of bound on the board
+        
         numj = 3
         numk = 3
-        if (x - 1 >= 0): 
+        if (x - 1 >= 0 and x + 1 <= 8): # check position not at edge
             x = x - 1
-        else:
+        elif(x - 1 < 0 and x + 1 <= 8): # check left edge
             numj = 2
-        if (y - 1 >= 0): 
+        elif(x - 1 >= 0 and x + 1 > 8): # check right edge
+            x = x - 1
+            numj = 2
+
+        if (y - 1 >= 0 and y + 1 <= 8): # check position not at edge
             y = y - 1
-        else:
+        elif(y - 1 < 0 and y + 1 <= 8): # check top edge
             numk = 2
+        elif(y - 1 >= 0 and y + 1 > 8): # check bottom edge
+            y = y - 1
+            numk = 2
+        
         for j in range(numj):
             for k in range(numk):
-                try:
-                    if (j == position[1] and k == position[0]): ## check if the move is same as starting position
-                        continue
-                    if (board[y + k][x + j][2] == " "):
-                        result_moves += [self.team, self.type, [y + k, x + j, 2], position, False]
-                    if (board[y + k][x + j][0] == " " and board[y + k][x + j][1] == " " and board[y + k][x + j][2].team == -self.team):
-                        result_moves += [self.team, self.type, [y + k, x + j, 2], position, True]                            
-                except:
-                    pass
+                if (x + j == position[1] and y + k == position[0]): ## check if the move is same as starting position
+                    continue
+                if (board[y + k][x + j][2] == " "):
+                    result_moves.append([self.team, self.type, [y + k, x + j, 2], position, False])
+                elif (board[y + k][x + j][0] == " " and board[y + k][x + j][1] == " " and board[y + k][x + j][2].team == -self.team):
+                    result_moves.append([self.team, self.type, [y + k, x + j, 2], position, True])                          
+        #print("result_moves for king = ", result_moves)        
         return self.remove_invalid_moves(result_moves)
     
     def fortress_moves(self, board, position):
@@ -157,25 +165,31 @@ class Piece:
         ## account for negative out of bound on the board
         numj = 3
         numk = 3
-        if (x - 1 >= 0): 
+        if (x - 1 >= 0 and x + 1 <= 8): # check position not at edge
             x = x - 1
-        else:
+        elif(x - 1 < 0 and x + 1 <= 8): # check left edge
             numj = 2
-        if (y - 1 >= 0): 
+        elif(x - 1 >= 0 and x + 1 > 8): # check right edge
+            x = x - 1
+            numj = 2
+
+        if (y - 1 >= 0 and y + 1 <= 8): # check position not at edge
             y = y - 1
-        else:
+        elif(y - 1 < 0 and y + 1 <= 8): # check top edge
             numk = 2
+        elif(y - 1 >= 0 and y + 1 > 8): # check bottom edge
+            y = y - 1
+            numk = 2
+
         for j in range(numj):
             for k in range(numk):
-                try:
-                    if (j == position[1] and k == position[0]): ## check if the move is same as starting position
-                        continue
-                    if (board[y + k][x + j][2] == " "):
-                        result_moves += [self.team, self.type, [y + k, x + j, 2], position, False]
-                    if (board[y + k][x + j][0] == " " and board[y + k][x + j][1] == " " and board[y + k][x + j][2].team == -self.team):
-                        result_moves += [self.team, self.type, [y + k, x + j, 2], position, True]                            
-                except:
-                    pass
+                
+                if (x + j == position[1] and y + k == position[0]): ## check if the move is same as starting position
+                    continue
+                if (board[y + k][x + j][2] == " "):
+                    result_moves.append([self.team, self.type, [y + k, x + j, 2], position, False])
+                if (board[y + k][x + j][0] == " " and board[y + k][x + j][1] == " " and board[y + k][x + j][2].team == -self.team):
+                    result_moves.append([self.team, self.type, [y + k, x + j, 2], position, True])                          
         return self.remove_invalid_moves(result_moves)
 
     def archer_moves(self, board, position):
@@ -403,6 +417,7 @@ class Piece:
         # generate a list of moves for the current piece object
         movelist = []
         if (self.type == 1):
+            
             movelist = self.pawn_moves(board, position) 
         if (self.type == 2):
             movelist = self.king_moves(board, position)
@@ -420,8 +435,8 @@ class Piece:
             movelist = self.cannon_moves(board, position)
         if (self.type == 9):
             movelist = self.musketeer_moves(board, position)
-
-        print("move list ", movelist)
+        
+        #print("move list of this type ", self.type, " is ", movelist)
         return movelist
 
 

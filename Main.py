@@ -383,10 +383,10 @@ def simplesetup(board):
 def process_move(board, player, opponent):
     
     best_move = player.next_move(board, opponent)
-    print("best move = ", best_move)
+    #print("best move = ", best_move)
     image = 0 ## use 0 for now, need to change to png image
-    board.remove_piece(best_move[2], best_move[4])
-    board.add_piece(best_move[0],best_move[1], image, best_move[3],best_move[4])
+    board.remove_piece(best_move[3], best_move[4])
+    board.add_piece(best_move[0],best_move[1], image, best_move[2],best_move[4])
     board.move_history += [best_move]
     board.previous_move = best_move
     
@@ -411,11 +411,11 @@ def run1():
             
         print(board1)
 
-        winner = board.check_winner()
+        winner = board1.check_winner()
         if (winner == 1):
             print("winner is white")
             break
-        if (winner == 0):
+        if (winner == -1):
             print("winner is black")
             break
         
