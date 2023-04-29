@@ -370,10 +370,20 @@ def initialsetup1(board):
     board.add_piece(-1, 9, 0, [0,8,2], False) 
     board.add_piece(1, 9, 0, [8,8,2], False) 
 
+def simplesetup(board):
+    # simplest setup for debugging
+    for x in range(9): # add pawns
+        board.add_piece(-1, 1, 0, [2,x,2], False) 
+        board.add_piece(1, 1, 0, [6,x,2], False) 
+    
+    # add kings
+    board.add_piece(-1, 2, 0, [0,1,2], False) 
+    board.add_piece(1, 2, 0, [8,1,2], False) 
+
 def process_move(board, player, opponent):
-    result = True
-    player.add_move(board, opponent)
+    
     best_move = player.next_move(board, opponent)
+    print("best move = ", best_move)
     image = 0 ## use 0 for now, need to change to png image
     board.remove_piece(best_move[2], best_move[4])
     board.add_piece(best_move[0],best_move[1], image, best_move[3],best_move[4])
@@ -385,11 +395,14 @@ def process_move(board, player, opponent):
 def run1():
     move_limit = 100
     board1 = board(9,9,3)
-    initialsetup1(board1)
+    #initialsetup1(board1)
+    simplesetup(board1)
     print("board ", board1)
     #print(b1.squares)
-    player_white = Minimax_Player(1)
-    player_black = Minimax_Player(-1)
+    player_white = Player(1)
+    player_black = Player(-1)
+    #player_white = Minimax_Player(1)
+    #player_black = Minimax_Player(-1)
     
     while (move_limit != 0):
         process_move(board1, player_white, player_black)

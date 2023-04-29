@@ -19,10 +19,21 @@ class board:
         # data format of position 9x9x3 x9, p is number of pieces 
         # 0 = empty square, 1 = white, -1 = black
         self.dataformat = [[[[0 for i in range(self.layers)] for j in range(self.height)] for k in range(self.width)] for p in range(9)] 
+
+    def push(self, move):
+        # move format = [self.team, self.type, [y,x,z], [y,x,z], boolean]
+        # used only in minimax for simulating moves
+        if (move == []):
+            return
         
+        self.add_piece(move[0], move[1], 0, move[3], move[4])
+        self.remove_piece(move[2], move[4])
+
+
     def __repr__(self):             #  representation without graphics
         """ Returns a string representation for a Board object.
-        """
+                [layer 1],[layer 2],[layer 3]
+        """ 
         s = ""
         for y in range(self.height):
             s += "--" * self.width + "-" + "\n"
@@ -99,4 +110,9 @@ class board:
             position = x[1]
             if (p.team == team):
                 movelist += [p.moves(board, position)]
+
+        if movelist == []:
+            print("there are no legal moves")
+
+        
         return movelist 

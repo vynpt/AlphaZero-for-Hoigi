@@ -61,12 +61,15 @@ class Piece:
 
     def remove_invalid_moves(self, move_list):
         ## remove moves exceed boundaries of the board
+        """
         new_list = []
         for i in move_list:
             if ((i[2][0] >= 0) and (i[2][0] < 9) and (i[2][1] >= 0) and (i[2][1] < 9) and (i[2][2] >= 0) and (i[2][2] < 3)):
                 new_list += [i]
         return new_list
-
+        """
+        return move_list
+    
     def pawn_moves(self, board, position):
         result_moves = []     ## list of possible moves
         y = position[0]
@@ -417,6 +420,8 @@ class Piece:
             movelist = self.cannon_moves(board, position)
         if (self.type == 9):
             movelist = self.musketeer_moves(board, position)
+
+        print("move list ", movelist)
         return movelist
 
 

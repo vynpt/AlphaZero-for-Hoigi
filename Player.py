@@ -15,7 +15,8 @@ class Player:
     
     def next_move(self, board, opponent):
         # by default the play class makes random moves
-        self.opponentmoves = []
+
+        self.add_move(board, opponent)
         return random.choice(self.moves)
     
     def clear_moves(self):
@@ -80,19 +81,24 @@ class AlphaBetaMinimaxAI(Player):
         print("The optimal value is :", self.minimax(0, 0, True, values, self.MIN, self.MAX))
 
 class Minimax_Player(Player):
-    def eval_board(board):
+    def eval_board(self, board):
         # Heuristic function for minimax
+        
         score = 0
         pieces = board.allpieces()
         for p in pieces:
-            score += p.value[p.type]
+            score += p[0].value[p[0].type]
         return score
 
     def min_maxN(self, board,N):
-        team = 1 ## 1 = white, -1 = black
-        moves = list(board.legal_moves(team))
-        scores = []   ## scoring for each move, positive is good for white, negative is good for black
 
+        #moves = list(board.legal_moves(team))
+        
+        
+        scores = []   ## scoring for each move, positive is good for white, negative is good for black
+        moves = []
+        for i in self.moves:
+            moves += [i]
         for move in moves:
             temp = deepcopy(board)
             temp.push(move)
@@ -103,7 +109,7 @@ class Minimax_Player(Player):
 
             scores.append(self.eval_board(temp))
 
-        if board.turn == 1:
+        if self.team == 1:
         
             best_move = moves[scores.index(max(scores))]
 
@@ -113,6 +119,8 @@ class Minimax_Player(Player):
         return best_move
     
     def next_move(self, board, opponent):
+        self.add_move(board, opponent)
+        print("available moves", self.moves)
         return self.min_maxN(board, 1)
         
 # a simple wrapper function as the display only gives one imput , board
