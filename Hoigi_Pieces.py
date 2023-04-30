@@ -43,18 +43,18 @@ class Piece:
             s = "k"
         if (self.type == 3): # f = fortress
             s = "f"
-        if (self.type == 4): # t = captain
-            s = "t"
-        if (self.type == 5): # c = cannon
-            s = "c"
-        if (self.type == 6): # m = musketeer
-            s = "m"
-        if (self.type == 7): # a = archer
+        if (self.type == 4): # a = archer
             s = "a"
-        if (self.type == 8): # l = lietenant
+        if (self.type == 5): # l = lietenant
             s = "l"
-        if (self.type == 9): # g = general
+        if (self.type == 6): # g = general
             s = "g"
+        if (self.type == 7): # t = captain
+            s = "t"
+        if (self.type == 8): # c = cannon
+            s = "c"
+        if (self.type == 9): # m = musketeer
+            s = "m"
         
         if (self.team == 1):  # capitalize strinng for white
             s = s.upper()
@@ -76,6 +76,13 @@ class Piece:
         y = position[0]
         x = position[1]
         z = position[2]
+
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
+        
         if (z == 2): ## [layer3, layer2, layer1]
             # y > 0 and y < 8  is checking the edge of board
             # check
@@ -90,9 +97,7 @@ class Piece:
                         break
                     elif (board[y - 1 * self.team ][x][i].team == -self.team):
                         result_moves.append([self.team, self.type, [y - 1 * self.team, x, i], position, True])
-                        break
-            
-            
+                        break 
         else: ## pawn has same movements for layer2 and layer3
             num = 3
             ## check if the pawn is at left most side of the board, since negative array index will still be processed by try-except
@@ -102,9 +107,9 @@ class Piece:
                 num = 2
             for j in range(num):
                 ## moves that are out of the board will be passed
-                
+                #print("pawn is current in: ", [y - 1 * self.team, x + j, 2])
                 if (board[y - 1 * self.team ][x + j][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [y - 1 * self.team, x + j, 2], position, False])
+                    result_moves.append([self.team, self.type, [y - 1 * self.team, x + j, 2], position, False])
                 else:
                     for i in range(3): ## [layer3, layer2, layer1]
                         if (board[y - 1 * self.team ][x + j][i] == " "):
@@ -115,8 +120,6 @@ class Piece:
                         elif (board[y - 1 * self.team ][x + j][i].team == -self.team):
                             result_moves.append([self.team, self.type, [y - 1 * self.team, x + j, i], position, True])
                             break
-                
-        
         return self.remove_invalid_moves(result_moves)
     
     def king_moves(self, board, position):
@@ -162,6 +165,13 @@ class Piece:
         y = position[0]
         x = position[1]
         z = position[2]
+
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
+        
         ## account for negative out of bound on the board
         numj = 3
         numk = 3
@@ -199,6 +209,12 @@ class Piece:
         x = position[1]
         z = position[2]
 
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
+        
         numj = 3 - z
         numk = 3 - z
         for k in range(-numk, numk + 1):
@@ -210,20 +226,21 @@ class Piece:
             for j in j_list:
                 if (x + j == position[1] and y + k == position[0]): ## check if the move is same as starting position
                     continue
-                if y+k < 0 or y+k > 7 or x+j < 0 or x+j > 7:  ## check out of bound
+                if y+k < 0 or y+k > 8 or x+j < 0 or x+j > 8:  ## check out of bound
                     continue
 
                 if (board[y + k][x + j][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [y + k][x + j][2], position, False])
-                for l in range(3):
-                    if (board[y + k][x + j][l] == " "):
-                        continue
-                    elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != 2):
-                        result_moves.append([self.team, self.type, [y+k, x+j, l-1], position, False])
-                        break
-                    elif (board[y + k][x + j][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [y+k, x+j, l], position, True])
-                        break 
+                    result_moves.append([self.team, self.type, [y + k, x + j, 2], position, False])
+                else:
+                    for l in range(3):
+                        if (board[y + k][x + j][l] == " "):
+                            continue
+                        elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != 2):
+                            result_moves.append([self.team, self.type, [y+k, x+j, l-1], position, False])
+                            break
+                        elif (board[y + k][x + j][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [y+k, x+j, l], position, True])
+                            break 
 
         return self.remove_invalid_moves(result_moves)
 
@@ -233,55 +250,63 @@ class Piece:
         x = position[1]
         z = position[2]
 
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
+        
         if (z == 2):
             possible = [[y-1, x-1], [y-1, x], [y - 1 * self.team, x+1], [y+1, x-1], [y+1, x+1]]
             for i in range(len(possible)):
-                if possible[i][0] < 0 or possible[i][0] > 7 or possible[i][1] < 0 or possible[i][1] > 7:
+                if possible[i][0] < 0 or possible[i][0] > 8 or possible[i][1] < 0 or possible[i][1] > 8:
                     continue
                 if (board[possible[i][0]][possible[i][1]][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [possible[i][0]][possible[i][1]][2], position, False])
-                for l in range(3):
-                    if (board[possible[i][0]][possible[i][1]][l] == " "):
-                        continue
-                    elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
-                        break
-                    elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
-                        break
+                    result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], 2], position, False])
+                else:
+                    for l in range(3):
+                        if (board[possible[i][0]][possible[i][1]][l] == " "):
+                            continue
+                        elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
+                            break
+                        elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
+                            break
         if (z == 1):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1]]
             for i in range(len(possible)):
-                if possible[i][0] < 0 or possible[i][0] > 7 or possible[i][1] < 0 or possible[i][1] > 7:
+                if possible[i][0] < 0 or possible[i][0] > 8 or possible[i][1] < 0 or possible[i][1] > 8:
                     continue
                 if (board[possible[i][0]][possible[i][1]][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [possible[i][0]][possible[i][1]][2], position, False])
-                for l in range(3):
-                    if (board[possible[i][0]][possible[i][1]][l] == " "):
-                        continue
-                    elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
-                        break
-                    elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
-                        break 
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], 2], position, False])
+                else:  
+                    for l in range(3):
+                        if (board[possible[i][0]][possible[i][1]][l] == " "):
+                            continue
+                        elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
+                            break
+                        elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
+                            break 
         if (z == 0):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1], [y, x-1], [y, x+1]]
             for i in range(len(possible)):
-                if possible[i][0] < 0 or possible[i][0] > 7 or possible[i][1] < 0 or possible[i][1] > 7:
+                if possible[i][0] < 0 or possible[i][0] > 8 or possible[i][1] < 0 or possible[i][1] > 8:
                     continue
                 if (board[possible[i][0]][possible[i][1]][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [possible[i][0]][possible[i][1]][2], position, False])
-                for l in range(3):
-                    if (board[possible[i][0]][possible[i][1]][l] == " "):
-                        continue
-                    elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
-                        break
-                    elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
-                        break  
-        print("result moves for lieutenant: ", result_moves)                     
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], 2], position, False])
+                else:  
+                    for l in range(3):
+                        if (board[possible[i][0]][possible[i][1]][l] == " "):
+                            continue
+                        elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
+                            break
+                        elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
+                            break                    
         return self.remove_invalid_moves(result_moves)
 
     def general_moves(self, board, position):
@@ -289,54 +314,63 @@ class Piece:
         y = position[0]
         x = position[1]
         z = position[2]
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
+        
         if (z == 2):
             possible = [[y - 1 * self.team, x-1], [y-1, x], [y - 1 * self.team, x+1], [y, x-1], [y, x+1], [y+1, x]]
             for i in range(len(possible)):
-                if possible[i][0] < 0 or possible[i][0] > 7 or possible[i][1] < 0 or possible[i][1] > 7:
+                if possible[i][0] < 0 or possible[i][0] > 8 or possible[i][1] < 0 or possible[i][1] > 8:
                     continue
                 if (board[possible[i][0]][possible[i][1]][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [possible[i][0]][possible[i][1]][2], position, False])
-                for l in range(3):
-                    if (board[possible[i][0]][possible[i][1]][l] == " "):
-                        continue
-                    elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
-                        break
-                    elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
-                        break
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], 2], position, False])
+                else:  
+                    for l in range(3):
+                        if (board[possible[i][0]][possible[i][1]][l] == " "):
+                            continue
+                        elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
+                            break
+                        elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
+                            break
         if (z == 1):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1], [y, x-1], [y, x+1]]
             for i in range(len(possible)):
-                if possible[i][0] < 0 or possible[i][0] > 7 or possible[i][1] < 0 or possible[i][1] > 7:
+                if possible[i][0] < 0 or possible[i][0] > 8 or possible[i][1] < 0 or possible[i][1] > 8:
                     continue
                 if (board[possible[i][0]][possible[i][1]][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [possible[i][0]][possible[i][1]][2], position, False])
-                for l in range(3):
-                    if (board[possible[i][0]][possible[i][1]][l] == " "):
-                        continue
-                    elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
-                        break
-                    elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
-                        break 
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], 2], position, False])
+                else:   
+                    for l in range(3):
+                        if (board[possible[i][0]][possible[i][1]][l] == " "):
+                            continue
+                        elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
+                            break
+                        elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
+                            break 
         if (z == 0):
             possible = [[y-1, x-1], [y-1, x], [y-1, x+1], [y+1, x-1], [y+1, x], [y+1, x+1], [y, x-1], [y, x+1], [y - 2 * self.team, x-1], [y - 2 * self.team, x], [y - 2 * self.team, x+1]]
             for i in range(len(possible)):
-                if possible[i][0] < 0 or possible[i][0] > 7 or possible[i][1] < 0 or possible[i][1] > 7:
+                if possible[i][0] < 0 or possible[i][0] > 8 or possible[i][1] < 0 or possible[i][1] > 8:
                     continue
                 if (board[possible[i][0]][possible[i][1]][2] == " "):  # the empty square is a possible move
-                        result_moves.append([self.team, self.type, [possible[i][0]][possible[i][1]][2], position, False])
-                for l in range(3):
-                    if (board[possible[i][0]][possible[i][1]][l] == " "):
-                        continue
-                    elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
-                        break
-                    elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
-                        break                       
+                        result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], 2], position, False])
+                else:  
+                    for l in range(3):
+                        if (board[possible[i][0]][possible[i][1]][l] == " "):
+                            continue
+                        elif (board[possible[i][0]][possible[i][1]][l].team == self.team and l > 0 and board[possible[i][0]][possible[i][1]][l].type != 2):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l-1], position, False])
+                            break
+                        elif (board[possible[i][0]][possible[i][1]][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [possible[i][0], possible[i][1], l], position, True])
+                            break                       
         return self.remove_invalid_moves(result_moves)
 
     def captain_moves(self, board, position):
@@ -345,6 +379,12 @@ class Piece:
         y = position[0]
         x = position[1]
         z = position[2]
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
+        
 
         if (z == 2):   ## [layer3, layer2, layer1]
             ## account for negative out of bound on the board
@@ -372,16 +412,17 @@ class Piece:
                             continue
 
                         if (board[y + k][x + j][2] == " "):  # the empty square is a possible move
-                            result_moves.append([self.team, self.type, [y + k][x + j][2], position, False])
-                        for l in range(3):
-                            if (board[y + k][x + j][l] == " "):
-                                continue
-                            elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != 2):
-                                result_moves.append([self.team, self.type, [y + k, x + j, l - 1], position, False])
-                                break
-                            elif (board[y + k][x + j][l].team == -self.team):
-                                result_moves.append([self.team, self.type, [y + k, x + j, l], position, True])
-                                break                           
+                            result_moves.append([self.team, self.type, [y + k, x + j, 2], position, False])
+                        else:
+                            for l in range(3):
+                                if (board[y + k][x + j][l] == " "):
+                                    continue
+                                elif (board[y + k][x + j][l].team == self.team and l > 0 and board[y + k][x + j][l].type != 2):
+                                    result_moves.append([self.team, self.type, [y + k, x + j, l - 1], position, False])
+                                    break
+                                elif (board[y + k][x + j][l].team == -self.team):
+                                    result_moves.append([self.team, self.type, [y + k, x + j, l], position, True])
+                                    break                           
                     except:
                         pass
         else:  ## captain is similar for layer2 and layer3         
@@ -395,36 +436,43 @@ class Piece:
         y = position[0]
         x = position[1]
         z = position[2]
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
 
         move = 3 - z   ## move i-square orthogonally
         for i in range(-move, move + 1):
             if (i == 0):
                 continue
-            if (y+i >= 0 and y+i < 8):    ## check out of bound
+            if (y+i >= 0 and y+i <= 8):    ## check out of bound
                 if (board[y+i][x][2] == " "):  # the empty square is a possible move
-                    result_moves.append([self.team, self.type, [y+i][x][2], position, False])
-                for ly in range(3):
-                    if (board[y+i][x][ly] == " "):
-                        continue
-                    elif (board[y+i][x][ly].team == self.team and ly > 0 and board[y+i][x][ly].type != 2):
-                        result_moves.append([self.team, self.type, [y+i, x, ly-1], position, False])
-                        break
-                    elif (board[y+i][x][ly].team == -self.team):
-                        result_moves.append([self.team, self.type, [y+i, x, ly], position, True])
-                        break 
+                    result_moves.append([self.team, self.type, [y+i, x, 2], position, False])
+                else:
+                    for ly in range(3):
+                        if (board[y+i][x][ly] == " "):
+                            continue
+                        elif (board[y+i][x][ly].team == self.team and ly > 0 and board[y+i][x][ly].type != 2):
+                            result_moves.append([self.team, self.type, [y+i, x, ly-1], position, False])
+                            break
+                        elif (board[y+i][x][ly].team == -self.team):
+                            result_moves.append([self.team, self.type, [y+i, x, ly], position, True])
+                            break 
             
-            if (x+i >= 0 and x+i < 8):    ## check out of bound
+            if (x+i >= 0 and x+i <= 8):    ## check out of bound
                 if (board[y][x+i][2] == " "):  # the empty square is a possible move
-                    result_moves.append([self.team, self.type, [y][x + i][2], position, False])        
-                for lx in range(3):
-                    if (board[y][x+i][lx] == " "):
-                        continue
-                    elif (board[y][x+i][lx].team == self.team and lx > 0 and board[y][x+i][lx].type != 2):
-                        result_moves.append([self.team, self.type, [y, x+i, lx-1], position, False])
-                        break
-                    elif (board[y][x+i][lx].team == -self.team):
-                        result_moves.append([self.team, self.type, [y, x+i, lx], position, True])
-                        break 
+                    result_moves.append([self.team, self.type, [y, x + i, 2], position, False])  
+                else:      
+                    for lx in range(3):
+                        if (board[y][x+i][lx] == " "):
+                            continue
+                        elif (board[y][x+i][lx].team == self.team and lx > 0 and board[y][x+i][lx].type != 2):
+                            result_moves.append([self.team, self.type, [y, x+i, lx-1], position, False])
+                            break
+                        elif (board[y][x+i][lx].team == -self.team):
+                            result_moves.append([self.team, self.type, [y, x+i, lx], position, True])
+                            break 
         return self.remove_invalid_moves(result_moves)
 
     def musketeer_moves(self, board, position):
@@ -433,21 +481,27 @@ class Piece:
         y = position[0]
         x = position[1]
         z = position[2]
+        # check for if there is another piece on top of the current piece
+        if (z == 1 and board[y][x][z - 1] != " "):
+            return result_moves
+        elif (z == 2 and (board[y][x][z - 2] != " " or board[y][x][z - 1] != " ")):
+            return result_moves
 
         move = 3 - z   ## move i-square orthogonally
         for i in range(1, move + 1):
-            if (y - i * self.team >= 0 and y - i * self.team < 8):    ## check out of bound
+            if (y - i * self.team >= 0 and y - i * self.team <= 8):    ## check out of bound
                 if (board[y - i * self.team][x][2] == " "):  # the empty square is a possible move
-                    result_moves.append([self.team, self.type, [y - i * self.team][x][2], position, False]) 
-                for l in range(3):
-                    if (board[y - i * self.team][x][l] == " "):
-                        continue
-                    elif (board[y - i * self.team][x][l].team == self.team and l > 0 and board[y - i * self.team][x][l].type != 2):
-                        result_moves.append([self.team, self.type, [y - i * self.team, x, l-1], position, False])
-                        break
-                    elif (board[y - i * self.team][x][l].team == -self.team):
-                        result_moves.append([self.team, self.type, [y - i * self.team, x, l], position, True])
-                        break 
+                    result_moves.append([self.team, self.type, [y - i * self.team, x, 2], position, False]) 
+                else:
+                    for l in range(3):
+                        if (board[y - i * self.team][x][l] == " "):
+                            continue
+                        elif (board[y - i * self.team][x][l].team == self.team and l > 0 and board[y - i * self.team][x][l].type != 2):
+                            result_moves.append([self.team, self.type, [y - i * self.team, x, l-1], position, False])
+                            break
+                        elif (board[y - i * self.team][x][l].team == -self.team):
+                            result_moves.append([self.team, self.type, [y - i * self.team, x, l], position, True])
+                            break 
         return self.remove_invalid_moves(result_moves)
 
     def moves(self, board, position):

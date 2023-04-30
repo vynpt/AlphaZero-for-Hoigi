@@ -390,22 +390,19 @@ def process_move(board, player, opponent):
     board.add_piece(best_move[0],best_move[1], image, best_move[2],best_move[4])
     board.move_history += [best_move]
     board.previous_move = best_move
+
+    print(player.team, " made ", best_move)
+    print(board)
     
 
 ## Test code for non graphic interface 
 def run1():
     move_limit = 100
     board1 = board(9,9,3)
-<<<<<<< HEAD
-    initialsetup1(board1, 4)
+    initialsetup1(board1, 9)
     #simplesetup(board1)
     print("board ", board1)
     #print(b1.squares)
-=======
-    initialsetup1(board1)
-    #simplesetup(board1)
-    
->>>>>>> 0c15fd76adfa2002d265a3461e5cea4d8a47ca3a
     player_white = Player(1)
     player_black = Player(-1)
     #player_white = Minimax_Player(1)
@@ -416,7 +413,7 @@ def run1():
         board1.changeturn()
         process_move(board1, player_black, player_white)
             
-        print(board1)
+        
 
         winner = board1.check_winner()
         if (winner == 1):
@@ -425,6 +422,7 @@ def run1():
         if (winner == -1):
             print("winner is black")
             break
+        
         
         move_limit -= 1
         
