@@ -15,14 +15,23 @@ class Player:
     
     def next_move(self, board, opponent):
         # by default the play class makes random moves
-
         self.add_move(board, opponent)
         #print("player moves", self.moves)
-        return random.choice(self.moves)
+        result = random.choice(self.moves) 
+        self.clear_moves() # clears the move so future moves are not disrupted
+        return result
     
     def clear_moves(self):
         # modifier method for clearing moves
         self.moves = []
+
+    def check_turn(self, board):
+        # helper function for checking if it is the player's turn
+        if (board.turn != self.team):
+            print("Not this player's turn Error!")
+            return False
+        else:
+            return True
 
 class AlphaBetaMinimaxAI(Player):
     
@@ -81,47 +90,43 @@ class AlphaBetaMinimaxAI(Player):
         values = [3, 5, 6, 9, 1, 2, 0, -1] 
         print("The optimal value is :", self.minimax(0, 0, True, values, self.MIN, self.MAX))
 
-class Minimax_Player(Player):
+class Minimax_Player(Player): 
     def eval_board(self, board):
         # Heuristic function for minimax
-        
+        # Don't question, we just made this up
         score = 0
         pieces = board.allpieces()
         for p in pieces:
             score += p[0].value[p[0].type]
         return score
 
-    def min_maxN(self, board,N):
-
-        #moves = list(board.legal_moves(team))
-        
-        
+    def min_maxN(self, board,n):
+        # requires that self.moves contains legal moves available for the current player
         scores = []   ## scoring for each move, positive is good for white, negative is good for black
         moves = []
-        for i in self.moves:
-            moves += [i]
-        for move in moves:
+        
+        for move in self.moves:
+            # make copy of the board position so we are not changing the actual board when trying moves
             temp = deepcopy(board)
             temp.push(move)
 
-            if N>1:
-                temp_best_move = self.min_maxN(temp,N-1)
+            if n>0:  # look ahead n moves opponent player plays
+                temp_best_move = self.min_maxN(temp,n-1)
                 temp.push(temp_best_move)
 
-            scores.append(self.eval_board(temp))
+            scores.append(self.eval_board(temp))   # score corresponse to the move indices
 
         if self.team == 1:
-        
-            best_move = moves[scores.index(max(scores))]
-
-        else:
-            best_move = moves[scores.index(min(scores))]
+            best_move = self.moves[scores.index(max(scores))] # max() finds the highest positive score
+        else: # that is self.team == -1
+            best_move = self.moves[scores.index(min(scores))] # min() finds the lowest positive score
 
         return best_move
     
     def next_move(self, board, opponent):
         self.add_move(board, opponent)
         print("available moves", self.moves)
+        self.clear_moves()
         return self.min_maxN(board, 1)
         
 # a simple wrapper function as the display only gives one imput , board
