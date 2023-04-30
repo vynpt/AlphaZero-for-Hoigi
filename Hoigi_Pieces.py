@@ -156,7 +156,7 @@ class Piece:
                     result_moves.append([self.team, self.type, [y + k, x + j, 2], position, False])
                 elif (board[y + k][x + j][0] == " " and board[y + k][x + j][1] == " " and board[y + k][x + j][2].team == -self.team):
                     result_moves.append([self.team, self.type, [y + k, x + j, 2], position, True])                          
-        print("result_moves for king = ", result_moves)        
+        #print("result_moves for king = ", result_moves)        
         return self.remove_invalid_moves(result_moves)
     
     def fortress_moves(self, board, position):

@@ -75,22 +75,21 @@ def read(n):
     f.close()
     print("read input = ",input)
     return PGNconvertor([input], outputformat = "MOVES") #### need change, dont need string list for input MOVES mode
-#write([[1, 2, [3,4,5], [6,7,8], False],[1, 2, [3,4,5], [6,7,8], True]], 2)
-#print("read = ", read(2))
+'''
+def GUI():
+    WIDTH = 720 ## size of board drawn
 
-WIDTH = 720 ## size of board drawn
+    WIN = pygame.display.set_mode((WIDTH, WIDTH))
 
-WIN = pygame.display.set_mode((WIDTH, WIDTH))
+    """ This is creating the window that we are playing on, it takes a tuple argument which is the dimensions of the window so in this case 900 x 900px
+    """
 
-""" This is creating the window that we are playing on, it takes a tuple argument which is the dimensions of the window so in this case 900 x 900px
-"""
-
-pygame.display.set_caption("Hoigi")
-WHITE = (255, 255, 255)
-GREY = (128, 128, 128)
-YELLOW = (204, 204, 0)
-BLUE = (50, 255, 255)
-BLACK = (0, 0, 0)
+    pygame.display.set_caption("Hoigi")
+    WHITE = (255, 255, 255)
+    GREY = (128, 128, 128)
+    YELLOW = (204, 204, 0)
+    BLUE = (50, 255, 255)
+    BLACK = (0, 0, 0)
 
 class Node:
     def __init__(self, row, col, width):
@@ -106,8 +105,7 @@ class Node:
 
     def setup(self, WIN):
         b_pawn = Piece(-1, 'pawn', 'Letter/b_pawn.png')
-        WIN.blit(pygame.image.load(b_pawn.image), (self.x, self.y))
-        
+        WIN.blit(pygame.image.load(b_pawn.image), (self.x, self.y))       
         
 def make_grid(rows, width):
     grid = []
@@ -126,7 +124,6 @@ This is creating the nodes thats are on the board(so the Hoigi tiles)
 I've put them into a 2d array which is identical to the dimesions of the board
 """
 
-
 def draw_grid(win, rows, width):
     gap = width // 9
     for i in range(rows):
@@ -138,7 +135,6 @@ def draw_grid(win, rows, width):
     The nodes are all white so this we need to draw the grey lines that separate all the chess tiles
     from each other and that is what this function does"""
 
-
 def update_display(win, grid, rows, width):
     for row in grid:
         for spot in row:
@@ -147,14 +143,12 @@ def update_display(win, grid, rows, width):
     draw_grid(win, rows, width)
     pygame.display.update()
 
-
 def Find_Node(pos, WIDTH):
     interval = WIDTH / 9
     y, x = pos
     rows = y // interval
     columns = x // interval
     return int(rows), int(columns)
-
 
 def display_potential_moves(positions, grid):
     for i in positions:
@@ -164,11 +158,11 @@ def display_potential_moves(positions, grid):
         Displays all the potential moves
         """
 
-'''
+
 def Do_Move(OriginalPos, FinalPosition, WIN):
     starting_order[FinalPosition] = starting_order[OriginalPos]
     starting_order[OriginalPos] = None
-'''
+
 
 def remove_highlight(grid):
     for i in range(len(grid)):
@@ -182,7 +176,6 @@ def remove_highlight(grid):
 you can get those co-ordinates using my old function for swap"""
 
 ##create_board(board)
-
 
 def main(WIN, WIDTH):
     b_pawn = Piece(-1, 'pawn', 'Letter/b_pawn.png')
@@ -256,7 +249,7 @@ def main(WIN, WIDTH):
                 sys.exit()
             
             """This quits the program if the player closes the window"""
-'''
+    
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 y, x = Find_Node(pos, WIDTH)
@@ -307,29 +300,9 @@ def main(WIN, WIDTH):
                     selected = False
 
             update_display(WIN, grid, 9, WIDTH)
-'''
-
-'''
-def main():     # main program for running the chess game
-    b1 = board(9,9,3)
-    p1 = Player(0)
-    p2 = Random_player(1)
-    
-    print(b1)
-    # check if the entered move is valid
-
-
-    while True:
-
-        if process_move(b1, p1, p2) == True:
-            return b1
-        # making a random move
-        if process_move(b1, p2, p1) == True:
-            return b1
-'''
+    '''
 
 #main(WIN, WIDTH)
-
 
 def initialsetup1(board, n):
     # Put some pieces on the board to start the game
@@ -381,59 +354,77 @@ def simplesetup(board):
     board.add_piece(-1, 2, 0, [0,1,2], False) 
     board.add_piece(1, 2, 0, [8,1,2], False) 
 
-def process_move(board, player, opponent):
+def process_move(board, player):
     
-    best_move = player.next_move(board, opponent)
+    best_move = player.next_move(board)
     #print("best move = ", best_move)
     image = 0 ## use 0 for now, need to change to png image
     board.remove_piece(best_move[3], best_move[4])
     board.add_piece(best_move[0],best_move[1], image, best_move[2],best_move[4])
-    board.move_history += [best_move]
-    board.previous_move = best_move
-
-    print(player.team, " made ", best_move)
-    print(board)
+    return best_move
     
 
+    #print("made move = ", best_move)
+    #print(board)
+
+
+        
+    
 ## Test code for non graphic interface 
 def run1():
-    move_limit = 100
+    move_limit = 50
     board1 = board(9,9,3)
     initialsetup1(board1, 9)
+    winner = 0
+    move_history = []
     #simplesetup(board1)
-    print("board ", board1)
-    #print(b1.squares)
-    player_white = Player(1)
-    player_black = Player(-1)
-    #player_white = Minimax_Player(1)
-    #player_black = Minimax_Player(-1)
     
-    while (move_limit != 0):
-        process_move(board1, player_white, player_black)
-        board1.changeturn()
-        process_move(board1, player_black, player_white)
-            
-        
+    alphabetadepth = 10
+    #player_white = Minimax_Player(1)  # don't run this, it is super slow
+    player_white = MinimaxAlphaBeta_Player(1, alphabetadepth)
+    #player_black = MinimaxAlphaBeta_Player(-1, alphabetadepth)
+    player_black = Player(-1)
 
+    while (move_limit != 0):
+        white_move = process_move(board1, player_white)
+        move_history.append(white_move)
         winner = board1.check_winner()
         if (winner == 1):
             print("winner is white")
-            break
+            return move_history
         if (winner == -1):
             print("winner is black")
-            break
+            return move_history
         
+        board1.changeturn()
+
+        black_move = process_move(board1, player_black)
+        move_history.append(black_move)
+        winner = board1.check_winner()
+        if (winner == 1):
+            print("winner is white")
+            return move_history
+        if (winner == -1):
+            print("winner is black")
+            return move_history
         
         move_limit -= 1
+    
+    if (winner == 0):
+        print("It is a Draw")
+    return move_history
         
-
-
-
 def test_wrapper():
     print("---------------------------")
     print()
     print("testing run1() ")
-    run1()
+    start = time.time()
+    move_history = run1()
+    print("Total number of moves = ", len(move_history))
+    write(move_history, 1)
+    print()
+    end = time.time()
+    print("Time taken to play a game = ", end - start)
     print()
     print("---------------------------")
 

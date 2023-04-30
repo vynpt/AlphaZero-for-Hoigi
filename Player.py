@@ -8,14 +8,14 @@ class Player:
         self.team = team
         self.opponent_team = team * -1
         self.moves = []
-        self.opponentmoves = []
+        
 
-    def add_move(self, board, opponent):
+    def add_move(self, board): # use the board function to find all possible moves for the current player
         self.moves = board.legal_moves(self.team)
     
-    def next_move(self, board, opponent):
+    def next_move(self, board):
         # by default the play class makes random moves
-        self.add_move(board, opponent)
+        self.add_move(board)
         #print("player moves", self.moves)
         result = random.choice(self.moves) 
         self.clear_moves() # clears the move so future moves are not disrupted
@@ -33,62 +33,6 @@ class Player:
         else:
             return True
 
-class AlphaBetaMinimaxAI(Player):
-    
-    def __init__(self, color):
-        super().__init__(color)
-        self.MAX = 1000
-        self.MIN = -1000
-
-    # Returns optimal value for current player
-    #(Initially called for root and maximizer)
-    def minimax(self, depth, nodeIndex, maximizingPlayer,
-                values, alpha, beta):
-    
-        # Terminating condition. i.e
-        # leaf node is reached
-        if depth == 3:
-            return values[nodeIndex]
-    
-        if maximizingPlayer:
-        
-            best = self.MIN
-    
-            # Recur for left and right children
-            for i in range(0, 2):
-                
-                val = self.minimax(depth + 1, nodeIndex * 2 + i,
-                            False, values, alpha, beta)
-                best = max(best, val)
-                alpha = max(alpha, best)
-    
-                # Alpha Beta Pruning
-                if beta <= alpha:
-                    break
-            
-            return best
-        
-        else:
-            best = self.MAX
-    
-            # Recur for left and
-            # right children
-            for i in range(0, 2):
-            
-                val = self.minimax(self, depth + 1, nodeIndex * 2 + i,
-                                True, values, alpha, beta)
-                best = min(best, val)
-                beta = min(beta, best)
-    
-                # Alpha Beta Pruning
-                if beta <= alpha:
-                    break
-            
-            return best
-        
-    def test(self):
-        values = [3, 5, 6, 9, 1, 2, 0, -1] 
-        print("The optimal value is :", self.minimax(0, 0, True, values, self.MIN, self.MAX))
 
 class Minimax_Player(Player): 
     def eval_board(self, board):
@@ -96,25 +40,31 @@ class Minimax_Player(Player):
         # Don't question, we just made this up
         score = 0
         pieces = board.allpieces()
+        #print("pieces = ", pieces)
         for p in pieces:
-            score += p[0].value[p[0].type]
+            tempscore += p[0].value[p[0].type-1]
+            score += tempscore
+        #print("score = ", score)
         return score
 
-    def min_maxN(self, board,n):
+    def min_maxN(self, board, n):
         # requires that self.moves contains legal moves available for the current player
-        scores = []   ## scoring for each move, positive is good for white, negative is good for black
-        moves = []
+        scores = []   ## scoring for each move, positive is good for white, negative is good for black        
+        best_move = 0
+    
         
         for move in self.moves:
+            
             # make copy of the board position so we are not changing the actual board when trying moves
-            temp = deepcopy(board)
-            temp.push(move)
+            tempboard = deepcopy(board)
+            tempboard.push(move)
+            
+            if n > 0:  # look ahead n moves opponent player plays
+                temp_best_move = self.min_maxN(tempboard,n-1)
+                tempboard.push(temp_best_move)
 
-            if n>0:  # look ahead n moves opponent player plays
-                temp_best_move = self.min_maxN(temp,n-1)
-                temp.push(temp_best_move)
-
-            scores.append(self.eval_board(temp))   # score corresponse to the move indices
+            scores.append(self.eval_board(tempboard))   # score corresponse to the move indices
+            
 
         if self.team == 1:
             best_move = self.moves[scores.index(max(scores))] # max() finds the highest positive score
@@ -123,13 +73,81 @@ class Minimax_Player(Player):
 
         return best_move
     
-    def next_move(self, board, opponent):
-        self.add_move(board, opponent)
-        print("available moves", self.moves)
+    def next_move(self, board):
+        self.add_move(board)
+        #print("available moves", self.moves)
+        bestmove = self.min_maxN(board, 2)
         self.clear_moves()
-        return self.min_maxN(board, 1)
+        return bestmove
         
-# a simple wrapper function as the display only gives one imput , board
-#def play_min_maxN(board):
-#    N=3
-#    return min_maxN(board,N)
+
+class MinimaxAlphaBeta_Player(Player): 
+    def __init__(self, color, depth):
+        super().__init__(color)
+        self.MAX = numpy.Inf  #initialize to be positive infinity
+        self.MIN = numpy.NINF #initialize to be negative infinity
+        self.depth = depth # number of moves we look ahead
+
+    def eval_board(self, board):
+        # Heuristic function for minimax
+        # Don't question, we just made this up
+        score = 0
+        pieces = board.allpieces()
+        #print("pieces = ", pieces)
+        for p in pieces:
+            #print(p)
+            score += p[0].value[p[0].type-1]
+        return score
+
+    def MinimaxAlphaBeta(self, depth, board, alpha, beta, maximizingplayer):
+        # requires that self.moves contains legal moves available for the current player
+        # depth is number of moves look ahead 
+        # maximizingplayer is a boolean 
+        if (depth == 0):
+            return -self.eval_board(board)
+        if maximizingplayer: #initialize to min for maximizing
+            bestmove_score = self.MIN 
+            for move in self.moves:
+                # make copy of the board position so we are not changing the actual board when trying moves
+                tempboard = deepcopy(board)
+                tempboard.push(move)
+                tempmove_score = self.MinimaxAlphaBeta(depth - 1, tempboard, alpha, beta, False)
+                #temp.push(temp_best_move)
+                bestmove_score = max(bestmove_score, tempmove_score)
+                alpha = max(alpha, tempmove_score) # update alpha
+                if beta <= alpha: # the check condition for pruning the move or not
+                    return bestmove_score # prune, stop checking more moves in the for loop  
+        else: 
+            bestmove_score = self.MAX # which is the minimizingplayer, initialize to max for minimizing
+            for move in self.moves:
+                # make copy of the board position so we are not changing the actual board when trying moves
+                tempboard = deepcopy(board)
+                tempboard.push(move)
+                tempmove_score = self.MinimaxAlphaBeta(depth - 1, tempboard, alpha, beta, True)
+                #temp.push(temp_best_move)
+                bestmove_score = min(bestmove_score, tempmove_score)
+                alpha = min(alpha, tempmove_score) # update alpha
+                if beta <= alpha: # the check condition for pruning the move or not
+                    return bestmove_score # prune, stop checking more moves in the for loop
+    
+    def MinimaxAlphaBetaDriver(self, depth, board):
+        # driver function for calling the recursive Minimax Alphabeta
+        # depth is how many moves we look ahead in the future
+        bestmove = self.moves[0]
+        bestmove_score = self.MIN #initialize worse score to optimize
+        for move in self.moves:
+            # make copy of the board position so we are not changing the actual board when trying moves
+            tempboard = deepcopy(board)
+            tempboard.push(move)
+            tempmove_score = self.MinimaxAlphaBeta(depth - 1, tempboard, self.MAX, self.MIN, False)
+            if (tempmove_score > bestmove_score): 
+                # if the current checked move has better score than the best move on record
+                bestmove_score = tempmove_score # update best score 
+                bestmove = move # update bestmove
+        return bestmove
+
+    def next_move(self, board):
+        self.add_move(board)
+        bestmove = self.MinimaxAlphaBetaDriver(self.depth, board)
+        self.clear_moves()
+        return bestmove

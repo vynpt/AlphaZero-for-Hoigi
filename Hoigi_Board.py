@@ -80,6 +80,7 @@ class board:
         
     def check_winner(self):
         # return an integer, 0 = no winner, -1 = black is winner, 1 = white is winner
+        # Assuming that king only appears on layer 1, which is z = 2
         winner = 0    
         for y in range(self.height):
             for x in range(self.width):
