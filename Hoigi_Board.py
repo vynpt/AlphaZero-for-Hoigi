@@ -26,8 +26,8 @@ class board:
         if (move == []):
             return
         
-        self.add_piece(move[0], move[1], 0, move[3], move[4])
-        self.remove_piece(move[2], move[4])
+        self.add_piece(move[0], move[1], 0, move[2], move[4])
+        self.remove_piece(move[3], move[4])
 
 
     def __repr__(self):             #  representation without graphics

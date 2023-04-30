@@ -396,10 +396,16 @@ def process_move(board, player, opponent):
 def run1():
     move_limit = 100
     board1 = board(9,9,3)
+<<<<<<< HEAD
     initialsetup1(board1, 4)
     #simplesetup(board1)
     print("board ", board1)
     #print(b1.squares)
+=======
+    initialsetup1(board1)
+    #simplesetup(board1)
+    
+>>>>>>> 0c15fd76adfa2002d265a3461e5cea4d8a47ca3a
     player_white = Player(1)
     player_black = Player(-1)
     #player_white = Minimax_Player(1)

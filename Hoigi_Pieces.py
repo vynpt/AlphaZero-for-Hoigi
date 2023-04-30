@@ -350,13 +350,20 @@ class Piece:
             ## account for negative out of bound on the board
             numj = 3
             numk = 3
-            if (x - 1 >= 0): 
+            if (x - 1 >= 0 and x + 1 <= 8): # check position not at edge
                 x = x - 1
-            else:
+            elif(x - 1 < 0 and x + 1 <= 8): # check left edge
                 numj = 2
-            if (y - 1 >= 0): 
+            elif(x - 1 >= 0 and x + 1 > 8): # check right edge
+                x = x - 1
+                numj = 2
+
+            if (y - 1 >= 0 and y + 1 <= 8): # check position not at edge
                 y = y - 1
-            else:
+            elif(y - 1 < 0 and y + 1 <= 8): # check top edge
+                numk = 2
+            elif(y - 1 >= 0 and y + 1 > 8): # check bottom edge
+                y = y - 1
                 numk = 2
             for j in range(numj):
                 for k in range(numk):
