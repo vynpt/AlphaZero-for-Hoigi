@@ -331,44 +331,45 @@ def main():     # main program for running the chess game
 #main(WIN, WIDTH)
 
 
-def initialsetup1(board):
+def initialsetup1(board, n):
     # Put some pieces on the board to start the game
     
-    for x in range(9): # add pawns
-        board.add_piece(-1, 1, 0, [2,x,2], False) 
-        board.add_piece(1, 1, 0, [6,x,2], False) 
-    
-    # add kings
-    board.add_piece(-1, 2, 0, [0,1,2], False) 
-    board.add_piece(1, 2, 0, [8,1,2], False) 
-
-    # add fortress
-    board.add_piece(-1, 3, 0, [0,2,2], False) 
-    board.add_piece(1, 3, 0, [8,2,2], False) 
-
-    # add captain
-    board.add_piece(-1, 4, 0, [0,3,2], False) 
-    board.add_piece(1, 4, 0, [8,3,2], False) 
-
-    # add cannon
-    board.add_piece(-1, 5, 0, [0,4,2], False) 
-    board.add_piece(1, 5, 0, [8,4,2], False) 
-
-    # add musketeer
-    board.add_piece(-1, 6, 0, [0,5,2], False) 
-    board.add_piece(1, 6, 0, [8,5,2], False) 
-
-    # add archer
-    board.add_piece(-1, 7, 0, [0,6,2], False) 
-    board.add_piece(1, 7, 0, [8,6,2], False) 
-
-    # add lieutenant
-    board.add_piece(-1, 8, 0, [0,7,2], False) 
-    board.add_piece(1, 8, 0, [8,7,2], False) 
-
-    # add general
-    board.add_piece(-1, 9, 0, [0,8,2], False) 
-    board.add_piece(1, 9, 0, [8,8,2], False) 
+    if (n >= 1):
+        for x in range(9): # add pawns
+            board.add_piece(-1, 1, 0, [2,x,2], False) 
+            board.add_piece(1, 1, 0, [6,x,2], False) 
+    if (n >= 2):   
+        # add kings
+        board.add_piece(-1, 2, 0, [0,1,2], False) 
+        board.add_piece(1, 2, 0, [8,1,2], False) 
+    if (n >= 3):
+        # add fortress
+        board.add_piece(-1, 3, 0, [0,2,2], False) 
+        board.add_piece(1, 3, 0, [8,2,2], False) 
+    if (n >= 4):
+        # add captain
+        board.add_piece(-1, 4, 0, [0,3,2], False) 
+        board.add_piece(1, 4, 0, [8,3,2], False) 
+    if (n >= 5):
+        # add cannon
+        board.add_piece(-1, 5, 0, [0,4,2], False) 
+        board.add_piece(1, 5, 0, [8,4,2], False) 
+    if (n >= 6):
+        # add musketeer
+        board.add_piece(-1, 6, 0, [0,5,2], False) 
+        board.add_piece(1, 6, 0, [8,5,2], False) 
+    if (n >= 7):
+        # add archer
+        board.add_piece(-1, 7, 0, [0,6,2], False) 
+        board.add_piece(1, 7, 0, [8,6,2], False) 
+    if (n >= 8):
+        # add lieutenant
+        board.add_piece(-1, 8, 0, [0,7,2], False) 
+        board.add_piece(1, 8, 0, [8,7,2], False) 
+    if (n >= 9):
+        # add general
+        board.add_piece(-1, 9, 0, [0,8,2], False) 
+        board.add_piece(1, 9, 0, [8,8,2], False) 
 
 def simplesetup(board):
     # simplest setup for debugging
@@ -395,8 +396,8 @@ def process_move(board, player, opponent):
 def run1():
     move_limit = 100
     board1 = board(9,9,3)
-    #initialsetup1(board1)
-    simplesetup(board1)
+    initialsetup1(board1, 4)
+    #simplesetup(board1)
     print("board ", board1)
     #print(b1.squares)
     player_white = Player(1)
