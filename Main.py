@@ -412,12 +412,12 @@ def initialsetup1(board, n):
         board.add_piece(1, 5, 0, [8,4,2], False) 
     if (n >= 6):
         # add musketeer
-        board.add_piece(-1, 6, 0, [0,5,2], False) 
-        board.add_piece(1, 6, 0, [8,5,2], False) 
+        board.add_piece(-1, 9, 0, [0,5,2], False) 
+        board.add_piece(1, 9, 0, [8,5,2], False) 
     if (n >= 7):
         # add archer
-        board.add_piece(-1, 7, 0, [0,6,2], False) 
-        board.add_piece(1, 7, 0, [8,6,2], False) 
+        board.add_piece(-1, 4, 0, [0,6,2], False) 
+        board.add_piece(1, 4, 0, [8,6,2], False) 
     if (n >= 8):
         # add lieutenant
         board.add_piece(-1, 8, 0, [0,7,2], False) 
@@ -434,8 +434,102 @@ def simplesetup(board):
         board.add_piece(1, 1, 0, [6,x,2], False) 
     
     # add kings
-    board.add_piece(-1, 2, 0, [0,1,2], False) 
-    board.add_piece(1, 2, 0, [8,1,2], False) 
+    board.add_piece(-1, 2, 0, [0,4,2], False) 
+    board.add_piece(1, 2, 0, [8,4,2], False) 
+
+def StandardSetup(board):
+    # standard initial board setup for 26 pieces
+    for x in range(9): # add pawns
+        board.add_piece(-1, 1, 0, [2,x,2], False) 
+        board.add_piece(1, 1, 0, [6,x,2], False) 
+        
+    # add kings
+    board.add_piece(-1, 2, 0, [0,4,2], False) 
+    board.add_piece(1, 2, 0, [8,4,2], False) 
+    
+    # add fortress
+    board.add_piece(-1, 3, 0, [1,2,2], False)
+    board.add_piece(-1, 3, 0, [1,6,2], False)
+    board.add_piece(1, 3, 0, [7,2,2], False) 
+    board.add_piece(1, 3, 0, [7,6,2], False) 
+
+    # add archer
+    board.add_piece(-1, 4, 0, [1,3,2], False) 
+    board.add_piece(-1, 4, 0, [1,5,2], False)
+    board.add_piece(1, 4, 0, [7,3,2], False) 
+    board.add_piece(1, 4, 0, [7,5,2], False)
+
+    # add lieutenant
+    board.add_piece(-1, 5, 0, [0,2,2], False) 
+    board.add_piece(-1, 5, 0, [0,6,2], False) 
+    board.add_piece(-1, 5, 0, [2,1,1], False) 
+    board.add_piece(-1, 5, 0, [2,7,1], False) 
+    board.add_piece(1, 5, 0, [6,1,1], False)
+    board.add_piece(1, 5, 0, [6,7,1], False)
+    board.add_piece(1, 5, 0, [8,2,2], False)
+    board.add_piece(1, 5, 0, [8,6,2], False)
+    
+    # add general
+    board.add_piece(-1, 6, 0, [0,3,2], False)
+    board.add_piece(-1, 6, 0, [0,5,2], False) 
+    board.add_piece(-1, 6, 0, [1,1,2], False) 
+    board.add_piece(-1, 6, 0, [1,7,2], False)  
+    board.add_piece(1, 6, 0, [7,1,2], False) 
+    board.add_piece(1, 6, 0, [7,7,2], False) 
+    board.add_piece(1, 6, 0, [8,3,2], False) 
+    board.add_piece(1, 6, 0, [8,5,2], False) 
+
+    # add captain
+    board.add_piece(-1, 7, 0, [2,4,1], False) 
+    board.add_piece(1, 7, 0, [6,4,1], False) 
+
+    # add cannon
+    board.add_piece(-1, 8, 0, [1,2,1], False)
+    board.add_piece(-1, 8, 0, [1,6,1], False)
+    board.add_piece(1, 8, 0, [7,2,1], False) 
+    board.add_piece(1, 8, 0, [7,6,1], False) 
+
+    # add musketeer
+    board.add_piece(-1, 9, 0, [1,4,2], False) 
+    board.add_piece(1, 9, 0, [7,4,2], False) 
+
+def SimplifiedSetup(board): 
+    # simplified initial board setup for 17 pieces
+    for x in range(9): # add pawns
+        board.add_piece(-1, 1, 0, [2,x,2], False) 
+        board.add_piece(1, 1, 0, [6,x,2], False) 
+        
+    # add kings
+    board.add_piece(-1, 2, 0, [0,4,2], False) 
+    board.add_piece(1, 2, 0, [8,4,2], False) 
+
+    # add fortress
+    board.add_piece(-1, 3, 0, [1,4,2], False) 
+    board.add_piece(1, 3, 0, [7,4,2], False) 
+
+    # add archer
+    board.add_piece(-1, 4, 0, [1,4,0], False) 
+    board.add_piece(1, 4, 0, [7,4,0], False) 
+
+    # add lieutenant
+    board.add_piece(-1, 5, 0, [1,4,1], False) 
+    board.add_piece(1, 5, 0, [7,4,1], False)
+
+    # add general
+    board.add_piece(-1, 6, 0, [1,3,2], False) 
+    board.add_piece(1, 6, 0, [7,3,2], False) 
+
+    # add captain
+    board.add_piece(-1, 7, 0, [1,5,2], False) 
+    board.add_piece(1, 7, 0, [7,5,2], False) 
+
+    # add cannon
+    board.add_piece(-1, 8, 0, [1,2,2], False) 
+    board.add_piece(1, 8, 0, [7,2,2], False) 
+
+    # add musketeer
+    board.add_piece(-1, 9, 0, [1,6,2], False) 
+    board.add_piece(1, 9, 0, [7,6,2], False) 
 
 def process_move(board, player):
     
@@ -454,10 +548,13 @@ def process_move(board, player):
 def run1():
     move_limit = 50
     board1 = board(9,9,3)
-    initialsetup1(board1, 9)
     winner = 0
     move_history = []
+
+    #initialsetup1(board1, 9)
     #simplesetup(board1)
+    StandardSetup(board1)
+    #SimplifiedSetup(board1)
     
     alphabetadepth = 10
     #player_white = Minimax_Player(1)  # don't run this, it is super slow
