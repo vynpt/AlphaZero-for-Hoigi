@@ -94,6 +94,7 @@ class board:
     
     def allpieces(self):
         # return a list of all pieces on the board, and the position they are at in [y,x,z] format
+        # return [list, [y,x,z]]
         list = []
         for y in range(self.height):
             for x in range(self.width):

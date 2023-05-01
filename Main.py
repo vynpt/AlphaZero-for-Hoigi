@@ -55,6 +55,7 @@ def PGNconvertor(input, outputformat = "PGN"):
         return output
     else:
         return "PNNconvertor OutputFormat Error"
+    
 def PGNconvertorTest():
     print("PGNconvertor Test()----------------------")
     print("PGN mode:")
@@ -63,11 +64,13 @@ def PGNconvertorTest():
     print("MOVES mode:")
     print(PGNconvertor(['1,2,3,4,5,6,7,8,0|1,2,3,4,5,6,7,8,1'], outputformat = "MOVES"))
     print("--------------------------------------")
+
 def write(movelist,n):
     sfile = "PGN_data\\" + str(n) + ".txt"
     f = open(sfile, "w")
     f.write(PGNconvertor(movelist))
     f.close()
+
 def read(n):
     sfile = "PGN_data\\" + str(n) + ".txt"
     f = open(sfile, "r")
@@ -75,6 +78,86 @@ def read(n):
     f.close()
     print("read input = ",input)
     return PGNconvertor([input], outputformat = "MOVES") #### need change, dont need string list for input MOVES mode
+
+def WriteToSameFile(movelist, win):
+    # movelist is sequence of moves of a game
+    # win is an integer indicating which txt file to write to
+    # data in same file have same result
+    s = PGNconvertor(movelist)
+    sfile = "PGN_data\\" + str(win) + ".txt"
+    f = open(sfile, "a") # append to same file
+    f.write(s)
+    f.write("$") # use $ symbol to separate games
+    f.close()
+
+def ReadGames(filename):
+    # take an integer as filename
+    # return a list of move lists, each move list is a game
+    games = []
+    sfile = "PGN_data\\" + str(filename) + ".txt"
+    f = open(sfile, "r")
+    input = f.read()
+    input = input.split("$")   # input is a list of strings now
+    for s in input[:-1]: # last element is an empty string
+        games.append(PGNconvertor([s], outputformat = "MOVES"))
+    f.close()
+    return games 
+
+def BoardToMatrix(board_instance):
+    # take a board instance
+    # return a 18 x 9x9x3 list data
+    # 18 for each piece type white and black
+    # 1 = present at board, 0 = empty
+    #print("board instance = ", board)
+    data = [[[[0 for z in range(3)] for x in range(9)] for y in range(9)] for p in range(18)]
+    for p in range(18): 
+        for y in range(9):
+            for x in range(9):
+                for z in range(3):
+                    if (board_instance[y][x][z] == " "): # find empty squares
+                        data[p][y][x][z] = 0
+                    elif (p < 9): # find white pieces, p = 0 to 8
+                        if (board_instance[y][x][z].team == 1):
+                            if (board_instance[y][x][z].type == p + 1):
+                                data[p][y][x][z] = 1
+                            else:
+                                data[p][y][x][z] = 0
+                        else:
+                            data[p][y][x][z] = 0
+                    elif (p >= 9 and p < 18): # find white pieces, p = 9 to 17
+                        if (board_instance[y][x][z].team == -1):
+                            if (board_instance[y][x][z].type == p - 8):
+                                data[p][y][x][z] = 1
+                            else:
+                                data[p][y][x][z] = 0
+                        else:
+                            data[p][y][x][z] = 0
+                    else:
+                        print("PieceTypeError when converting to matrix data")
+                        return data  
+    #print("current instance of data = ", data)                     
+    return data
+
+def ConvertToNNdata(movelist):
+    # take list of moves
+    # return a list of matrices, each matrix is an instance of the board position
+    GameMatrix = []
+    b = board(9,9,3)
+    initialsetup1(b, 9)
+    
+    for m in movelist:
+        b.push(m)
+        GameMatrix.append(BoardToMatrix(b.squares))
+    return GameMatrix
+
+def AllGamesToNNData(games):
+    # take a list of all games
+    # return a list of matrices data
+    data = []
+    for g in games:
+        data.extend(ConvertToNNdata(g))
+    return data
+
 '''
 def GUI():
     WIDTH = 720 ## size of board drawn
@@ -363,12 +446,9 @@ def process_move(board, player):
     board.add_piece(best_move[0],best_move[1], image, best_move[2],best_move[4])
     return best_move
     
-
     #print("made move = ", best_move)
     #print(board)
 
-
-        
     
 ## Test code for non graphic interface 
 def run1():
@@ -391,10 +471,10 @@ def run1():
         winner = board1.check_winner()
         if (winner == 1):
             print("winner is white")
-            return move_history
+            return (move_history, winner)
         if (winner == -1):
             print("winner is black")
-            return move_history
+            return (move_history, winner)
         
         board1.changeturn()
 
@@ -403,26 +483,38 @@ def run1():
         winner = board1.check_winner()
         if (winner == 1):
             print("winner is white")
-            return move_history
+            return (move_history, winner)
         if (winner == -1):
             print("winner is black")
-            return move_history
+            return (move_history, winner)
         
         move_limit -= 1
     
     if (winner == 0):
         print("It is a Draw")
-    return move_history
-        
+    return (move_history, winner)
+
+def GenerateDataN(n):
+    # play n games, and write games of same result (1, 0, -1) to corresponding txt file 
+    # 1 = win for white, 0 = draw, -1 = win for black
+    for i in range(n):
+        (move_history, win) = run1()
+        print("Total number of moves = ", len(move_history))
+        WriteToSameFile(move_history, win)
+    
 def test_wrapper():
     print("---------------------------")
     print()
     print("testing run1() ")
     start = time.time()
-    move_history = run1()
-    print("Total number of moves = ", len(move_history))
-    write(move_history, 1)
-    print()
+
+    GenerateDataN(1)
+
+    games = ReadGames(1)
+    data = AllGamesToNNData(games)
+    #print("All games = ", games)
+    #print("Data = ", data)
+
     end = time.time()
     print("Time taken to play a game = ", end - start)
     print()

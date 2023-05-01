@@ -2,26 +2,28 @@ class Piece:
     def __init__(self, team, type, image, killable=False):
         self.team = team ## -1 for black, 0 for empty square, 1 for white
         self.image = image
-        self.value = [1, 4, 5, 3, 3, 2, 4, 6, 7]
+        self.value = [10, 40, 50, 30, 30, 20, 40, 60, 70]
         self.onhold = True     ## if the piece is not on the board yet
         
         self.type = type
-        ## empty = 0
+        """
         ## pawn = 1
         ## king = 2
         ## fortress = 3
-        ## captain = 4
-        ## cannon = 5
-        ## musketeer = 6
-        ## archer = 7
-        ## lieutenant = 8
-        ## general = 9
+        ## archer = 4
+        ## lieutenant = 5
+        ## general = 6
+        ## captain = 7
+        ## cannon = 8
+        ## musketeer = 9
 
+        ## not implemented:
+        ## empty = 0 
         ## spy = 10
         ## knight = 11
         ## samurai = 12
         ## major = 13
-
+        """
     ## return the layers on a square in top to bottom order
     ##def get_layer(coordinate):
     ##    result = [x for x in board[coordinate[0]][coordinate[1]]]
