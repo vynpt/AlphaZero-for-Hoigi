@@ -2,7 +2,7 @@ class Piece:
     def __init__(self, team, type, image, killable=False):
         self.team = team ## -1 for black, 0 for empty square, 1 for white
         self.image = image
-        self.value = [10, 40, 50, 30, 30, 20, 40, 60, 70]
+        self.value = [10, 40, 20, 130, 50, 70, 60, 90, 30] # Using the Shogi_strategy wiki page as reference
         self.onhold = True     ## if the piece is not on the board yet
         
         self.type = type
