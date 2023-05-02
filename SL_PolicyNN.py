@@ -57,11 +57,23 @@ input_shape = (18,9,9,3)
 Model = keras.Sequential(
     [
        keras.Input(shape = input_shape),
-       layers.Dense(1, activation='sigmoid')
+       layers.Dense(128, activation = "relu"),
+       layers.Dropout(0.2),
+       layers.Dense(64, activation = "relu"),
+       layers.Dense(32, activation = "relu"),
+       layers.Flatten(),
+       layers.Dropout(0.5),
+       layers.Dense(numOutPutResult, activation='softmax')
     ]
 )
+
+Model.summary()
 
 batch_size = 128
 epochs = 15
 Model.compile(loss="categorical_crossentropy", optimizer = "adam", metrics = "accuracy")
 Model.fit(x_train, y_train, batch_size = batch_size, epochs = epochs, validation_split = 0.1)
+
+score = Model.evaluate(x_test, y_test, verbose=0)
+print("Test loss:", score[0])
+print("Test accuracy:", score[1])
