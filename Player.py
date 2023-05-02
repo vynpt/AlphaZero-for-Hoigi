@@ -99,7 +99,7 @@ class MinimaxAlphaBeta_Player(Player):
 [[  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0]],
 [[  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0]],
 [[  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0], [  0,  0,  0]]]
-        self.blackPawnval = list(reversed(self.whitePawnEval)) 
+        self.blackPawnEval = list(reversed(self.whitePawnEval)) 
         self.whiteKingEval = [
 [[0,0,-4.0], [0,0,-5.0], [0,0,-5.0], [0,0,-6.0], [0,0,-7.0], [0,0,-6.0], [0,0,-5.0], [0,0,-5.0], [0,0,-4.0]],
 [[0,0,-4.0], [0,0,-5.0], [0,0,-5.0], [0,0,-6.0], [0,0,-7.0], [0,0,-6.0], [0,0,-5.0], [0,0,-5.0], [0,0,-4.0]],
@@ -258,6 +258,7 @@ class MinimaxAlphaBeta_Player(Player):
         # requires that self.moves contains legal moves available for the current player
         # depth is number of moves look ahead 
         # maximizingplayer is a boolean 
+        # return score for the current move
         if (depth == 0):
             return -self.eval_board(board)
         if maximizingplayer: #initialize to min for maximizing
@@ -289,17 +290,25 @@ class MinimaxAlphaBeta_Player(Player):
         # driver function for calling the recursive Minimax Alphabeta
         # depth is how many moves we look ahead in the future
         bestmove = self.moves[0]
+        best_list = []
         bestmove_score = self.MIN #initialize worse score to optimize
         for move in self.moves:
             # make copy of the board position so we are not changing the actual board when trying moves
             tempboard = deepcopy(board)
             tempboard.push(move)
             tempmove_score = self.MinimaxAlphaBeta(depth - 1, tempboard, self.MAX, self.MIN, False)
+            best_list.append([tempmove_score, move])
             if (tempmove_score > bestmove_score): 
                 # if the current checked move has better score than the best move on record
                 bestmove_score = tempmove_score # update best score 
                 bestmove = move # update bestmove
-        return bestmove
+        # With some probability, we will choose the second or third best move to have more variance on results 
+        best_list.sort() # sort according to score
+        best_list = [i[1] for i in best_list] # convert back to a list of moves
+        #print("best_list = ",best_list)
+        bestmove = random.choices(best_list[:3])  # , weights=(70, 20, 10))  
+        #print("bestmove",bestmove)
+        return bestmove[0]
 
     def next_move(self, board):
         self.add_move(board)

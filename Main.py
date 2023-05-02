@@ -6,6 +6,11 @@ from Player import*
 import pygame
 import time
 import sys
+"""
+from resource import *
+soft, hard = resource.getrlimit(resource.RLIMIT_AS)
+resource.setrlimit(resource.RLIMIT_AS, (6 * 1024 * 1024 * 1024, hard))
+"""
 ## Parser
 def PGNconvertor(input, outputformat = "PGN"):
     # move format = [self.team, self.type, [y,x,z], [y,x,z], boolean]
@@ -550,71 +555,84 @@ def run1():
     board1 = board(9,9,3)
     winner = 0
     move_history = []
+    numBranch = 0
 
     #initialsetup1(board1, 9)
     #simplesetup(board1)
     StandardSetup(board1)
     #SimplifiedSetup(board1)
     
-    alphabetadepth = 10
+    alphabetadepth = 6
     #player_white = Minimax_Player(1)  # don't run this, it is super slow
     player_white = MinimaxAlphaBeta_Player(1, alphabetadepth)
-    #player_black = MinimaxAlphaBeta_Player(-1, alphabetadepth)
-    player_black = Player(-1)
+    player_black = MinimaxAlphaBeta_Player(-1, alphabetadepth)
+    #player_black = Player(-1)
 
     while (move_limit != 0):
+        numBranch += len(board1.legal_moves(1))
         white_move = process_move(board1, player_white)
         move_history.append(white_move)
         winner = board1.check_winner()
         if (winner == 1):
             print("winner is white")
-            return (move_history, winner)
+            break
         if (winner == -1):
             print("winner is black")
-            return (move_history, winner)
+            break
+        
         
         board1.changeturn()
 
+        numBranch += len(board1.legal_moves(-1))
         black_move = process_move(board1, player_black)
         move_history.append(black_move)
         winner = board1.check_winner()
         if (winner == 1):
             print("winner is white")
-            return (move_history, winner)
+            break
         if (winner == -1):
             print("winner is black")
-            return (move_history, winner)
+            break
         
         move_limit -= 1
+        
     
     if (winner == 0):
         print("It is a Draw")
-    return (move_history, winner)
+
+    BranchingFactor = numBranch / len(move_history)
+    print("Branching Factor is ",  BranchingFactor)
+    return (move_history, winner, BranchingFactor)
 
 def GenerateDataN(n):
     # play n games, and write games of same result (1, 0, -1) to corresponding txt file 
     # 1 = win for white, 0 = draw, -1 = win for black
+    Total_BranchingFactor = 0
     for i in range(n):
-        (move_history, win) = run1()
+        (move_history, win, BranchingFactor) = run1()
         print("Total number of moves = ", len(move_history))
         WriteToSameFile(move_history, win)
-    
+        Total_BranchingFactor += BranchingFactor
+    Average_BranchingFactor = Total_BranchingFactor / n
+    print("Average Branching Factor is ", Average_BranchingFactor, " for ", n , "games")
+
 def test_wrapper():
     print("---------------------------")
     print()
     print("testing run1() ")
     start = time.time()
+    n = 20
+    GenerateDataN(n)
 
-    GenerateDataN(1)
-
-    games = ReadGames(1)
-    data = AllGamesToNNData(games)
+    #games = ReadGames(1)
+    #data = AllGamesToNNData(games)
     #print("All games = ", games)
     #print("Data = ", data)
 
     end = time.time()
-    print("Time taken to play a game = ", end - start)
-    print()
+    totalTime = end - start
+    print("Time taken to play ", n," games = ", totalTime)
+    print("Average Runtime of a game is ", totalTime / n)
     print("---------------------------")
 
 test_wrapper()
