@@ -551,7 +551,7 @@ def process_move(board, player):
     
 ## Test code for non graphic interface 
 def run1():
-    move_limit = 50
+    move_limit = 300
     board1 = board(9,9,3)
     winner = 0
     move_history = []
@@ -564,9 +564,9 @@ def run1():
     
     alphabetadepth = 6
     #player_white = Minimax_Player(1)  # don't run this, it is super slow
-    player_white = MinimaxAlphaBeta_Player(1, alphabetadepth)
+   #player_white = MinimaxAlphaBeta_Player(1, alphabetadepth)
     player_black = MinimaxAlphaBeta_Player(-1, alphabetadepth)
-    #player_black = Player(-1)
+    player_white = Player(1)
 
     while (move_limit != 0):
         numBranch += len(board1.legal_moves(1))
